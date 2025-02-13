@@ -15,8 +15,8 @@ npm install
 npm run dev
 
 ## project screenshots
-![Screenshot](https://drive.google.com/uc?id=10Wei4jVwfLDPvt6bi1FG2P5mKMZiG4Qv)
-![Screenshot](https://drive.google.com/uc?id=1qyUec2XiudlFtUnLQfciHY2NWgWdhcp9)
+![Screenshot](<img width="959" alt="Image" src="https://github.com/user-attachments/assets/58ab1b01-3abf-4520-89a4-93c9db8fccb9" />)
+![Screenshot](<img width="947" alt="Image" src="https://github.com/user-attachments/assets/6716331b-3eb1-4799-817a-35611b81f31a" />)
 
 
 

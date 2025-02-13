@@ -15,8 +15,9 @@ npm install
 npm run dev
 
 ## project screenshots
-![Screenshot](https://drive.google.com/file/d/10Wei4jVwfLDPvt6bi1FG2P5mKMZiG4Qv/view?usp=sharing)
-![Screenshot](https://drive.google.com/file/d/10Wei4jVwfLDPvt6bi1FG2P5mKMZiG4Qv/view?usp=drive_link)
+![Screenshot](https://drive.google.com/uc?id=10Wei4jVwfLDPvt6bi1FG2P5mKMZiG4Qv)
+![Screenshot](https://drive.google.com/uc?id=1qyUec2XiudlFtUnLQfciHY2NWgWdhcp9)
+
 
 
 

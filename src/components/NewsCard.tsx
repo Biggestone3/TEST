@@ -4,11 +4,22 @@ import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';
+import { News } from './News'; 
+
+interface NewsCardProps {
+  newsItem: News;
+  language: 'ar' | 'en';
+}
 
 export default function NewsCard({ newsItem, language }: NewsCardProps) {
   const [expanded, setExpanded] = React.useState(false);
   const [showAllSources, setShowAllSources] = React.useState(false);
   const isRTL = language === 'ar';
+
+  // Handle imageUrl type from News class
+  const imageUrl = typeof newsItem.imageUrl === 'string' 
+    ? newsItem.imageUrl 
+    : newsItem.imageUrl.default;
 
   // Content expansion logic
   const contentPreview = newsItem.content.split('\n')[0];
@@ -22,29 +33,28 @@ export default function NewsCard({ newsItem, language }: NewsCardProps) {
   return (
     <Card sx={{ 
       width: '100%',
-     
       my: 2,
       boxShadow: 3,
       display: 'flex',
       flexDirection: { xs: 'column', md: isRTL ? 'row-reverse' : 'row' },
-      alignSelf: 'center',  // Keep it centered in the container
+      alignSelf: 'center',
       margin: 'auto',
-      direction: isRTL ? 'rtl' : 'ltr'
+      direction: isRTL ? 'rtl' : 'ltr',
+      gap: 3
     }}>
-      
       {/* Image Section */}
       <Box sx={{ 
         flex: '0 0 30%',
         maxWidth: '30%',
         height: 300,
         overflow: 'hidden',
-        order: isRTL ? 2 : 1, // Move image to right in Arabic
+        order: isRTL ? 2 : 0,
         marginRight: isRTL ? 0 : 2,
         marginLeft: isRTL ? 2 : 0
       }}>
         <CardMedia
           component="img"
-          image={newsItem.imageUrl}
+          image={imageUrl}
           alt={newsItem.title}
           sx={{ 
             height: '100%', 
@@ -58,14 +68,14 @@ export default function NewsCard({ newsItem, language }: NewsCardProps) {
       <Box sx={{ 
         flex: 1, 
         p: 3,
-        minWidth: 0, // Prevents width issues
-        maxWidth: '65%', // Ensures it doesn’t expand too much
-        flexShrink: 1,  // Prevents pushing layout
+        minWidth: 0,
+        maxWidth: '65%',
+        flexShrink: 1,
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'space-between',
         textAlign: isRTL ? 'right' : 'left',
-        alignSelf: 'center',  // Keep aligned in center
+        alignSelf: 'center'
       }}>
         <Box>
           <Typography variant="h4" gutterBottom sx={{ 
@@ -82,7 +92,7 @@ export default function NewsCard({ newsItem, language }: NewsCardProps) {
             display: '-webkit-box',
             WebkitLineClamp: expanded ? 'unset' : 3,
             WebkitBoxOrient: 'vertical',
-            overflowWrap: 'break-word'  // Prevents text from stretching card width
+            overflowWrap: 'break-word'
           }}>
             {expanded ? fullContent : contentPreview}
           </Typography>

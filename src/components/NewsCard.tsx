@@ -1,10 +1,181 @@
+// import * as React from 'react';
+// import Card from '@mui/material/Card';
+// import CardMedia from '@mui/material/CardMedia';
+// import Typography from '@mui/material/Typography';
+// import Box from '@mui/material/Box';
+// import Link from '@mui/material/Link';
+// import { News } from './News'; 
+
+// interface NewsCardProps {
+//   newsItem: News;
+//   language: 'ar' | 'en';
+// }
+
+// export default function NewsCard({ newsItem, language }: NewsCardProps) {
+//   const [expanded, setExpanded] = React.useState(false);
+//   const [showAllSources, setShowAllSources] = React.useState(false);
+//   const isRTL = language === 'ar';
+
+//   // Handle imageUrl type from News class
+//   const imageUrl = typeof newsItem.imageUrl === 'string' 
+//     ? newsItem.imageUrl 
+//     : newsItem.imageUrl.default;
+
+//   // Content expansion logic
+//   const contentPreview = newsItem.content.split('\n')[0];
+//   const fullContent = newsItem.content;
+//   const hasMoreContent = newsItem.content.includes('\n');
+
+//   // Sources logic
+//   const visibleSources = showAllSources ? newsItem.sources : newsItem.sources.slice(0, 2);
+//   const hasMoreSources = newsItem.sources.length > 2;
+
+//   return (
+//     <Card sx={{ 
+//       width: '100%',
+//       my: 2,
+//       boxShadow: 3,
+//       display: 'flex',
+//       flexDirection: { xs: 'column', md: isRTL ? 'row-reverse' : 'row' },
+//       alignSelf: 'center',
+//       margin: 'auto',
+//       direction: isRTL ? 'rtl' : 'ltr',
+//       gap: 3
+//     }}>
+//       {/* Image Section */}
+//       <Box sx={{ 
+//         flex: '0 0 30%',
+//         maxWidth: '30%',
+//         height: 300,
+//         overflow: 'hidden',
+//         order: isRTL ? 2 : 0,
+//         marginRight: isRTL ? 0 : 2,
+//         marginLeft: isRTL ? 2 : 0
+//       }}>
+//         <CardMedia
+//           component="img"
+//           image={imageUrl}
+//           alt={newsItem.title}
+//           sx={{ 
+//             height: '100%', 
+//             width: '100%', 
+//             objectFit: 'cover'
+//           }}
+//         />
+//       </Box>
+
+//       {/* Content Section */}
+//       <Box sx={{ 
+//         flex: 1, 
+//         p: 3,
+//         minWidth: 0,
+//         maxWidth: '65%',
+//         flexShrink: 1,
+//         display: 'flex',
+//         flexDirection: 'column',
+//         justifyContent: 'space-between',
+//         textAlign: isRTL ? 'right' : 'left',
+//         alignSelf: 'center'
+//       }}>
+//         <Box>
+//           <Typography variant="h4" gutterBottom sx={{ 
+//             fontWeight: 'bold',
+//             textAlign: isRTL ? 'right' : 'left'
+//           }}>
+//             {newsItem.title}
+//           </Typography>
+
+//           {/* Expandable Content */}
+//           <Typography paragraph sx={{ 
+//             textAlign: isRTL ? 'right' : 'left',
+//             overflow: 'hidden',
+//             display: '-webkit-box',
+//             WebkitLineClamp: expanded ? 'unset' : 3,
+//             WebkitBoxOrient: 'vertical',
+//             overflowWrap: 'break-word'
+//           }}>
+//             {expanded ? fullContent : contentPreview}
+//           </Typography>
+//         </Box>
+
+//         {/* Read More/Less */}
+//         {hasMoreContent && (
+//           <Typography
+//             variant="body2"
+//             color="primary"
+//             onClick={() => setExpanded(!expanded)}
+//             sx={{ 
+//               cursor: 'pointer',
+//               display: 'block',
+//               textAlign: isRTL ? 'right' : 'left',
+//               mt: 1
+//             }}
+//           >
+//             {expanded ? 
+//               (isRTL ? 'قراءة أقل' : 'Read Less') : 
+//               (isRTL ? 'قراءة المزيد' : 'Read More')}
+//           </Typography>
+//         )}
+
+//         {/* Sources Section */}
+//         <Box sx={{ mt: 3 }}>
+//           <Typography variant="subtitle2" sx={{ 
+//             color: 'text.secondary',
+//             textAlign: isRTL ? 'right' : 'left',
+//             mb: 1
+//           }}>
+//             {isRTL ? 'المصادر:' : 'Sources:'}
+//           </Typography>
+          
+//           <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
+//             {visibleSources.map((source, index) => (
+//               <Link
+//                 key={index}
+//                 href={source.url}
+//                 target="_blank"
+//                 rel="noopener"
+//                 sx={{ 
+//                   color: 'primary.main',
+//                   cursor: 'pointer',
+//                   '&:hover': { textDecoration: 'underline' }
+//                 }}
+//               >
+//                 {source.name}
+//               </Link>
+//             ))}
+            
+//             {hasMoreSources && (
+//               <Typography
+//                 variant="body2"
+//                 color="primary"
+//                 onClick={() => setShowAllSources(!showAllSources)}
+//                 sx={{ 
+//                   cursor: 'pointer',
+//                   '&:hover': { textDecoration: 'underline' }
+//                 }}
+//               >
+//                 {showAllSources 
+//                   ? (isRTL ? 'عرض أقل' : 'Show Less') 
+//                   : (isRTL ? 'المزيد من المصادر' : 'More Sources')}
+//               </Typography>
+//             )}
+//           </Box>
+//         </Box>
+//       </Box>
+//     </Card>
+//   );
+// }
 import * as React from 'react';
 import Card from '@mui/material/Card';
 import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';
-import { News } from './News'; 
+import { useTheme } from '@mui/material/styles';
+import useMediaQuery from '@mui/material/useMediaQuery';
+
+// Import your News class
+import { News } from './News';
 
 interface NewsCardProps {
   newsItem: News;
@@ -12,16 +183,18 @@ interface NewsCardProps {
 }
 
 export default function NewsCard({ newsItem, language }: NewsCardProps) {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const [expanded, setExpanded] = React.useState(false);
   const [showAllSources, setShowAllSources] = React.useState(false);
   const isRTL = language === 'ar';
 
-  // Handle imageUrl type from News class
+  // Handle image URL
   const imageUrl = typeof newsItem.imageUrl === 'string' 
     ? newsItem.imageUrl 
     : newsItem.imageUrl.default;
 
-  // Content expansion logic
+  // Content logic
   const contentPreview = newsItem.content.split('\n')[0];
   const fullContent = newsItem.content;
   const hasMoreContent = newsItem.content.includes('\n');
@@ -36,21 +209,28 @@ export default function NewsCard({ newsItem, language }: NewsCardProps) {
       my: 2,
       boxShadow: 3,
       display: 'flex',
-      flexDirection: { xs: 'column', md: isRTL ? 'row-reverse' : 'row' },
+      flexDirection: isRTL ? 'row-reverse' : 'row', // Consistent layout for all screens
       alignSelf: 'center',
       margin: 'auto',
       direction: isRTL ? 'rtl' : 'ltr',
-      gap: 3
+      gap: 3,
+      p: 1,
+      // Mobile adjustments while keeping layout
+      flexWrap: isMobile ? 'wrap' : 'nowrap',
+      maxHeight: isMobile ? 450 : 'auto',
     }}>
-      {/* Image Section */}
+      {/* Image Section - Consistent layout */}
       <Box sx={{ 
         flex: '0 0 30%',
         maxWidth: '30%',
-        height: 300,
+        height: isMobile ? 150 : 300,
         overflow: 'hidden',
         order: isRTL ? 2 : 0,
         marginRight: isRTL ? 0 : 2,
-        marginLeft: isRTL ? 2 : 0
+        marginLeft: isRTL ? 2 : 0,
+        // Mobile adjustments
+        flexShrink: 0,
+        minWidth: isMobile ? '40%' : 'auto',
       }}>
         <CardMedia
           component="img"
@@ -59,46 +239,51 @@ export default function NewsCard({ newsItem, language }: NewsCardProps) {
           sx={{ 
             height: '100%', 
             width: '100%', 
-            objectFit: 'cover'
+            objectFit: 'cover',
+            objectPosition: 'center center'
           }}
         />
       </Box>
 
-      {/* Content Section */}
+      {/* Content Section - Same structure for all screens */}
       <Box sx={{ 
         flex: 1, 
-        p: 3,
+        p: isMobile ? 1 : 3,
         minWidth: 0,
-        maxWidth: '65%',
-        flexShrink: 1,
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'space-between',
         textAlign: isRTL ? 'right' : 'left',
-        alignSelf: 'center'
+        alignSelf: 'center',
+        // Mobile text scaling
+        fontSize: isMobile ? '0.9rem' : '1rem',
       }}>
         <Box>
-          <Typography variant="h4" gutterBottom sx={{ 
-            fontWeight: 'bold',
-            textAlign: isRTL ? 'right' : 'left'
-          }}>
+          <Typography 
+            variant="h4" 
+            gutterBottom 
+            sx={{ 
+              fontWeight: 'bold',
+              textAlign: isRTL ? 'right' : 'left',
+              fontSize: isMobile ? '1.2rem' : '2rem',
+            }}
+          >
             {newsItem.title}
           </Typography>
 
-          {/* Expandable Content */}
           <Typography paragraph sx={{ 
             textAlign: isRTL ? 'right' : 'left',
             overflow: 'hidden',
             display: '-webkit-box',
             WebkitLineClamp: expanded ? 'unset' : 3,
             WebkitBoxOrient: 'vertical',
-            overflowWrap: 'break-word'
+            overflowWrap: 'break-word',
+            lineHeight: isMobile ? 1.5 : 1.75,
           }}>
             {expanded ? fullContent : contentPreview}
           </Typography>
         </Box>
 
-        {/* Read More/Less */}
         {hasMoreContent && (
           <Typography
             variant="body2"
@@ -108,7 +293,8 @@ export default function NewsCard({ newsItem, language }: NewsCardProps) {
               cursor: 'pointer',
               display: 'block',
               textAlign: isRTL ? 'right' : 'left',
-              mt: 1
+              mt: 1,
+              fontSize: isMobile ? '0.8rem' : '0.9rem',
             }}
           >
             {expanded ? 
@@ -117,17 +303,21 @@ export default function NewsCard({ newsItem, language }: NewsCardProps) {
           </Typography>
         )}
 
-        {/* Sources Section */}
-        <Box sx={{ mt: 3 }}>
+        <Box sx={{ mt: isMobile ? 1 : 3 }}>
           <Typography variant="subtitle2" sx={{ 
             color: 'text.secondary',
             textAlign: isRTL ? 'right' : 'left',
-            mb: 1
+            mb: 1,
+            fontSize: isMobile ? '0.8rem' : '0.9rem',
           }}>
             {isRTL ? 'المصادر:' : 'Sources:'}
           </Typography>
           
-          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
+          <Box sx={{ 
+            display: 'flex',
+            flexWrap: 'wrap',
+            gap: isMobile ? 1 : 2,
+          }}>
             {visibleSources.map((source, index) => (
               <Link
                 key={index}
@@ -137,7 +327,8 @@ export default function NewsCard({ newsItem, language }: NewsCardProps) {
                 sx={{ 
                   color: 'primary.main',
                   cursor: 'pointer',
-                  '&:hover': { textDecoration: 'underline' }
+                  '&:hover': { textDecoration: 'underline' },
+                  fontSize: isMobile ? '0.8rem' : '0.9rem',
                 }}
               >
                 {source.name}
@@ -151,7 +342,8 @@ export default function NewsCard({ newsItem, language }: NewsCardProps) {
                 onClick={() => setShowAllSources(!showAllSources)}
                 sx={{ 
                   cursor: 'pointer',
-                  '&:hover': { textDecoration: 'underline' }
+                  '&:hover': { textDecoration: 'underline' },
+                  fontSize: isMobile ? '0.8rem' : '0.9rem',
                 }}
               >
                 {showAllSources 

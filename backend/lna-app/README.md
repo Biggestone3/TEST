@@ -31,6 +31,7 @@ For details, see the [Poetry documentation on environment activation](https://py
 
    a. On macOS/Linux:
    ```bash
+   cd backend/lna-app
    eval $(poetry env activate)
    ```
 

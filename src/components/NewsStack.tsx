@@ -12,9 +12,13 @@ export default function NewsStack({ language }: NewsStackProps) {
       display: 'flex',
       flexDirection: 'column',
       alignItems: 'center',
-      width: '100%',
+      justifyContent: 'center',
+      width: '90vw', 
+      maxWidth: '100%',
+      
       padding: 3,
-      direction: language === 'ar' ? 'rtl' : 'ltr' // Add direction control
+      direction: language === 'ar' ? 'rtl' : 'ltr' ,
+      
     }}>
       {newsItemsByLang[language]?.map((newsItem, index) => (
         <Box key={index} sx={{ 

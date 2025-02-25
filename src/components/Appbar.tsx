@@ -94,12 +94,12 @@ export default function SearchAppBar({ language, setLanguage }: SearchAppBarProp
         </Typography>
 
         <Search sx={{ 
-          width: isRTL ? 300 : 300, // Consistent width
-          marginLeft: isRTL ? 2 : 0,
-          marginRight: isRTL ? 0 : 2
+          width: isRTL ? 100 : 100, 
+          marginLeft: isRTL ? 1: 0,
+          marginRight: isRTL ? 0 : 1
         }}>
           <SearchIconWrapper sx={{ 
-            [isRTL ? 'right' : 'left']: 0 // Dynamic positioning
+            [isRTL ? 'right' : 'left']: 0 
           }}>
             <SearchIcon sx={{ color: 'text.secondary' }} />
           </SearchIconWrapper>

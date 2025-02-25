@@ -1,0 +1,14 @@
+repos:
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.1.13
+    hooks:
+      - id: ruff  # Linting
+      - id: ruff-format  # Auto-formatting
+
+  - repo: local
+    hooks:
+      - id: pyre
+        name: Run Pyre Type Checker
+        entry: cd backend/lna-app && poetry run pyre check
+        language: system
+        pass_filenames: false  # Pyre checks the whole repo, not just staged files 

@@ -1,3 +1,4 @@
+
 import  React from 'react';
 import { useState } from 'react';
 import SearchAppBar from './components/Appbar';
@@ -27,3 +28,4 @@ export default function App() {
     </Box>
   );
 }
+

@@ -1,0 +1,17 @@
+{
+  "source_directories": [
+    "."
+  ],
+  "search_path": [
+    { "site-package": "fastapi" },
+    { "site-package": "motor" },
+    { "site-package": "pydantic" },
+    { "site-package": "pymongo" },
+    { "site-package": "mongomock" },
+    { "site-package": "pytest" },
+    { "site-package": "uvicorn" },
+    { "site-package": "starlette" }
+  ],
+  "exclude": ["tests/", "venv/", "migrations/"],
+  "strict": true
+}

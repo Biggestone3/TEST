@@ -13,5 +13,4 @@ async def fetch_stories(
     cursor = db.stories.find()
     raw_stories: list[dict[str, Any]] = [story async for story in cursor]
 
-    return 1
     return [AggregatedStory(**story) for story in raw_stories]

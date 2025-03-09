@@ -2,9 +2,7 @@
 name = "lna-app"
 version = "0.1.0"
 description = ""
-authors = [
-    {name = "Your Name",email = "you@example.com"}
-]
+authors = [{ name = "Your Name", email = "you@example.com" }]
 readme = "README.md"
 requires-python = ">=3.13,<4.0"
 dependencies = [
@@ -16,7 +14,7 @@ dependencies = [
     "pydantic[email] (>=2.10.6,<3.0.0)",
     "python-dotenv (>=1.0.1,<2.0.0)",
     "beanie (>=1.29.0,<2.0.0)",
-    "mongomock-motor (>=0.0.35,<0.0.36)"
+    "mongomock-motor (>=0.0.35,<0.0.36)",
 ]
 
 
@@ -30,5 +28,4 @@ ruff = "^0.9.7"
 pre-commit = "^4.1.0"
 pyright = "^1.1.394"
 httpx = "^0.28.1"
-lna-db = {path = "../lna-db", develop = true}
-
+lna-db = { path = "../lna-db", develop = true }

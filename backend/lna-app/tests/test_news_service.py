@@ -1,9 +1,10 @@
 import unittest
 from datetime import UTC, datetime
 
-from lna_app.core.types import Language
-from lna_app.db.mock_db import get_mock_db, init_mock_db
-from lna_app.models.news import AggregatedStory
+from lna_db.core.types import Language
+from lna_db.db.mock_db import get_mock_db, init_mock_db
+from lna_db.models.news import AggregatedStory
+
 from lna_app.services.news_service import fetch_stories
 
 

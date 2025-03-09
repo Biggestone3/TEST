@@ -30,4 +30,5 @@ ruff = "^0.9.7"
 pre-commit = "^4.1.0"
 pyright = "^1.1.394"
 httpx = "^0.28.1"
+lna-db = {path = "../lna-db", develop = true}
 

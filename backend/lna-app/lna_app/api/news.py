@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends
+from lna_db.db.session import get_database
 from motor.motor_asyncio import AsyncIOMotorDatabase
 
-from lna_app.db.session import get_database
 from lna_app.schema.schema import AggregatedStoryListResponse
 from lna_app.services.news_service import fetch_stories
 

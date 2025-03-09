@@ -1,9 +1,8 @@
 from datetime import datetime
 from uuid import uuid4
 
+from lna_db.core.types import Language, UUIDstr
 from pydantic import BaseModel, EmailStr, Field
-
-from lna_app.core.types import Language, UUIDstr
 
 
 class UserPreferences(BaseModel):

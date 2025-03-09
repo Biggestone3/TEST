@@ -4,7 +4,7 @@ from uuid import uuid4
 from beanie import Document, Indexed
 from pydantic import EmailStr, Field
 
-from lna_app.core.types import Language, UUIDstr
+from lna_db.core.types import Language, UUIDstr
 
 
 class TimeStampedModel(Document):

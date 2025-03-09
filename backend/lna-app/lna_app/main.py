@@ -1,9 +1,9 @@
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
+from lna_db.db.session import init_database
 
 from lna_app.api import news
-from lna_app.db.session import init_database
 
 
 @asynccontextmanager

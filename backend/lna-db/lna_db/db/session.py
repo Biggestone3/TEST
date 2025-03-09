@@ -1,8 +1,8 @@
 from beanie import init_beanie
 from motor.motor_asyncio import AsyncIOMotorDatabase
 
-from lna_app.db.mongo import get_db as get_real_db
-from lna_app.models.news import AggregatedStory, Article, Source, User
+from lna_db.db.mongo import get_db as get_real_db
+from lna_db.models.news import AggregatedStory, Article, Source, User
 
 
 async def init_database() -> None:

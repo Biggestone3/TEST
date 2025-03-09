@@ -5,8 +5,8 @@ from beanie import init_beanie
 from mongomock_motor import AsyncMongoMockClient
 from motor.motor_asyncio import AsyncIOMotorDatabase
 
-from lna_app.models.news import AggregatedStory, Article, Source
-from lna_app.schema.schema import Language
+from lna_db.models.news import AggregatedStory, Article, Source
+from lna_db.core.types import Language
 
 # Create an in-memory MongoDB client for testing
 client = AsyncMongoMockClient()

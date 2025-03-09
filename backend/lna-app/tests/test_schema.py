@@ -1,9 +1,9 @@
 import unittest
 from datetime import UTC, datetime
 
+from lna_db.core.types import Language
 from pydantic import ValidationError
 
-from lna_app.core.types import Language
 from lna_app.schema.schema import AggregatedStory, AggregatedStoryListResponse
 
 

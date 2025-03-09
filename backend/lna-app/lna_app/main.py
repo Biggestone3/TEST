@@ -1,5 +1,7 @@
+import os
 from contextlib import asynccontextmanager
 
+from dotenv import load_dotenv
 from fastapi import FastAPI
 from lna_db.db.session import init_database
 
@@ -15,7 +17,9 @@ async def lifespan(app: FastAPI):
     - Shutdown: Any cleanup if needed
     """
     # Startup
-    await init_database()
+    load_dotenv()
+    use_mock_db = os.environ.get("USE_MOCK_DB", "false").lower() == "true"
+    await init_database(use_mock_db)
     yield
     # Shutdown (if we need cleanup later)
 

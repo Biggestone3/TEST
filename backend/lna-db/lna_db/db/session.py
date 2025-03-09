@@ -1,14 +1,15 @@
 from beanie import init_beanie
+from lna_db.db.mock_db import get_mock_db
 from motor.motor_asyncio import AsyncIOMotorDatabase
 
 from lna_db.db.mongo import get_db as get_real_db
 from lna_db.models.news import AggregatedStory, Article, Source, User
 
 
-async def init_database() -> None:
+async def init_database(use_mock_db: bool) -> None:
     """Initialize Beanie with all models. Should be called once during
     application startup."""
-    db = await get_real_db()
+    db = await get_mock_db() if use_mock_db else await get_real_db()
     models = [
         User,
         Source,

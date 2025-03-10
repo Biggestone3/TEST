@@ -39,18 +39,21 @@ This monorepo uses Poetry for dependency management. Each package has its own de
 
 ### Running Code Quality Tools
 
-From the root directory:
+**Important:** All these commands must be run from the **backend root directory**, not from individual package directories.
 
 ```
-# Run ruff on all packages
+# Run ruff linter and formatter
 poetry run ruff check .
+poetry run ruff format .
 
-# Run type checking
-poetry run pyre check
+# Run type checking with pyright
+poetry run pyright
 
-# Run pre-commit hooks
+# Run pre-commit hooks (if configured)
 poetry run pre-commit run --all-files
 ```
+
+Note: Pre-commit hooks require a `.pre-commit-config.yaml` file in the backend directory. If you encounter an error saying this file is not found, make sure you are in the correct directory or check if the file exists.
 
 ## Project Structure
 

@@ -113,7 +113,7 @@ name = "lna-db"
 version = "0.1.0"
 description = "Database module for LNA"
 optional = false
-python-versions = "^3.8"
+python-versions = ">=3.13, <4.0"
 groups = ["dev"]
 files = []
 develop = true

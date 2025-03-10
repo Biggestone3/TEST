@@ -10,14 +10,14 @@ repos:
     hooks:
       - id: pyre
         name: pyre
-        entry: poetry run pyre check
+        entry: bash -c 'cd backend && export PYTHONPATH=$PYTHONPATH:$(pwd) && poetry install && cd lna-db && poetry install && cd ../lna-app && poetry install && cd ../lna-crawlers && poetry install && cd .. && poetry run pyre check'
         language: system
         types: [python]
         pass_filenames: false
 
       - id: pyright
         name: pyright
-        entry: poetry run pyright
+        entry: bash -c 'cd backend && export PYTHONPATH=$PYTHONPATH:$(pwd) && poetry install && cd lna-db && poetry install && cd ../lna-app && poetry install && cd ../lna-crawlers && poetry install && cd .. && poetry run pyright'
         language: system
         types: [python]
         pass_filenames: false 

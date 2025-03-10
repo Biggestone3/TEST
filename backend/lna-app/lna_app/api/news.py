@@ -1,18 +1,14 @@
-from fastapi import APIRouter, Depends
-from lna_db.db.session import get_database
-from motor.motor_asyncio import AsyncIOMotorDatabase
+from fastapi import APIRouter
 
 from lna_app.schema.schema import AggregatedStoryListResponse
-from lna_app.services.news_service import fetch_stories
+from lna_app.services.news_service import get_stories_paginated
 
 router = APIRouter()
 
 
 @router.get("/stories", response_model=AggregatedStoryListResponse)
-async def get_stories(
-    db: AsyncIOMotorDatabase = Depends(get_database),
-) -> AggregatedStoryListResponse:
+async def get_stories() -> AggregatedStoryListResponse:
     """Fetch and return all stories."""
-    stories = await fetch_stories(db)
+    stories = await get_stories_paginated()
 
     return AggregatedStoryListResponse(stories=stories)

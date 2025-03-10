@@ -3,13 +3,14 @@ from contextlib import asynccontextmanager
 
 from dotenv import load_dotenv
 from fastapi import FastAPI
-from lna_db.db.session import init_database
+from lna_db.db.mock_db import init_mock_db
+from lna_db.db.mongo import init_database
 
 from lna_app.api import news
 
 
 @asynccontextmanager
-async def lifespan(app: FastAPI):
+async def lifespan(app: FastAPI):  # pyre-ignore
     """Lifespan context manager for FastAPI application.
 
     Handles startup and shutdown events:
@@ -19,7 +20,10 @@ async def lifespan(app: FastAPI):
     # Startup
     load_dotenv()
     use_mock_db = os.environ.get("USE_MOCK_DB", "false").lower() == "true"
-    await init_database(use_mock_db)
+    if use_mock_db:
+        await init_mock_db()
+    else:
+        await init_database()
     yield
     # Shutdown (if we need cleanup later)
 

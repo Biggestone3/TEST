@@ -43,7 +43,7 @@ From the root directory:
 
 ```
 # Run ruff on all packages
-poetry run ruff .
+poetry run ruff check .
 
 # Run type checking
 poetry run pyre check

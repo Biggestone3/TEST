@@ -2,27 +2,26 @@ from datetime import UTC, datetime
 from uuid import UUID
 
 from beanie import init_beanie
-from mongomock_motor import AsyncMongoMockClient
-from motor.motor_asyncio import AsyncIOMotorDatabase
+from mongomock_motor import AsyncMongoMockClient, AsyncMongoMockDatabase
 
-from lna_db.models.news import AggregatedStory, Article, Source
 from lna_db.core.types import Language
+from lna_db.models.news import AggregatedStory, Article, Source
 
 # Create an in-memory MongoDB client for testing
-client = AsyncMongoMockClient()
-db = client.test_database
+client: AsyncMongoMockClient = AsyncMongoMockClient()
+db: AsyncMongoMockDatabase = client.get_database("test_database")
 
 # Sample data with fixed UUIDs for testing
-source_id = UUID("550e8400-e29b-41d4-a716-446655440000")
-arabic_source_id = UUID("660e8400-e29b-41d4-a716-446655440000")
+source_id: UUID = UUID("550e8400-e29b-41d4-a716-446655440000")
+arabic_source_id: UUID = UUID("660e8400-e29b-41d4-a716-446655440000")
 
-article_1_id = UUID("a631c8c8-5943-4d7d-b7bc-6d7f8e569e6b")
-article_2_id = UUID("b724d849-5ad3-4e42-a29c-50049c6f4b38")
-arabic_article_1_id = UUID("d631c8c8-5943-4d7d-b7bc-6d7f8e569e6b")
-arabic_article_2_id = UUID("e724d849-5ad3-4e42-a29c-50049c6f4b38")
+article_1_id: UUID = UUID("a631c8c8-5943-4d7d-b7bc-6d7f8e569e6b")
+article_2_id: UUID = UUID("b724d849-5ad3-4e42-a29c-50049c6f4b38")
+arabic_article_1_id: UUID = UUID("d631c8c8-5943-4d7d-b7bc-6d7f8e569e6b")
+arabic_article_2_id: UUID = UUID("e724d849-5ad3-4e42-a29c-50049c6f4b38")
 
 
-def get_mock_data():
+def get_mock_data() -> tuple[list[Source], list[Article], list[AggregatedStory]]:
     """Get the mock data for testing."""
     mock_sources = [
         Source(
@@ -105,7 +104,10 @@ def get_mock_data():
 async def init_mock_db() -> None:
     """Initialize the mock database with sample data."""
     # Initialize Beanie with our models
-    await init_beanie(database=db, document_models=[Source, Article, AggregatedStory])
+    await init_beanie(
+        database=db,  # type: ignore
+        document_models=[Source, Article, AggregatedStory],
+    )
 
     # Clear existing data
     await Source.delete_all()
@@ -124,8 +126,3 @@ async def init_mock_db() -> None:
 
     for story in mock_stories:
         await story.save()
-
-
-async def get_mock_db() -> AsyncIOMotorDatabase:
-    """Returns the mock MongoDB instance."""
-    return db

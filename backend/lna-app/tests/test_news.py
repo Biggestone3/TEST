@@ -1,11 +1,9 @@
 import unittest
 
 from fastapi.testclient import TestClient
-from lna_db.db.mock_db import get_mock_db, init_mock_db
-from lna_db.db.session import get_database
-from lna_db.models.news import AggregatedStory
-
 from lna_app.main import app
+from lna_db.db.mock_db import init_mock_db
+from lna_db.models.news import AggregatedStory
 
 
 class TestNewsAPI(unittest.IsolatedAsyncioTestCase):
@@ -15,7 +13,6 @@ class TestNewsAPI(unittest.IsolatedAsyncioTestCase):
         """Override FastAPI's get_database() dependency before each test."""
         # Initialize the mock database
         await init_mock_db()
-        app.dependency_overrides[get_database] = get_mock_db
         self.client = TestClient(app)
 
     async def asyncTearDown(self) -> None:

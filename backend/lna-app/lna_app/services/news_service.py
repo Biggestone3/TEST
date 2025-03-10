@@ -1,16 +1,10 @@
-from typing import Any
-
-from motor.motor_asyncio import AsyncIOMotorDatabase
+from lna_db.models.news import AggregatedStory as DbAggregatedStory
 
 from lna_app.schema.schema import AggregatedStory
 
 
-async def fetch_stories(
-    db: AsyncIOMotorDatabase,
+async def get_stories_paginated(
+    skip: int = 0, limit: int = 10
 ) -> list[AggregatedStory]:
-    """Fetch all stories from MongoDB (supports both async and mock DB)."""
-
-    cursor = db.stories.find()
-    raw_stories: list[dict[str, Any]] = [story async for story in cursor]
-
-    return [AggregatedStory(**story) for story in raw_stories]
+    db_stories = await DbAggregatedStory.find().skip(skip).limit(limit).to_list()
+    return [AggregatedStory(**story.model_dump()) for story in db_stories]

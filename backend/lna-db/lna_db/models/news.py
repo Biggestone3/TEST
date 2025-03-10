@@ -1,5 +1,6 @@
 from datetime import UTC, datetime
-from uuid import uuid4
+from typing import Annotated, Any, Self
+from uuid import UUID, uuid4
 
 from beanie import Document, Indexed
 from pydantic import EmailStr, Field
@@ -10,14 +11,20 @@ from lna_db.core.types import Language, UUIDstr
 class TimeStampedModel(Document):
     """Base model with created and updated timestamps."""
 
-    id: UUIDstr = Field(default_factory=uuid4)
-    created_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
-    updated_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
+    id: UUID = Field(default_factory=uuid4)  # pyre-ignore
+    created_at: datetime = Field(
+        default_factory=lambda: datetime.now(UTC),
+        description="Timestamp when the model was created",
+    )
+    updated_at: datetime = Field(
+        default_factory=lambda: datetime.now(UTC),
+        description="Timestamp when the model was last updated",
+    )
 
     class Settings:
         use_state_management = True
 
-    async def save(self, *args, **kwargs):
+    async def save(self, *args: Any, **kwargs: Any) -> Self:
         self.updated_at = datetime.now(UTC)
         return await super().save(*args, **kwargs)
 
@@ -29,17 +36,21 @@ class UserPreferences(Document):
         default_factory=list, description="List of Source IDs that the user follows."
     )
     language: Language = Field(
-        Language.UNKNOWN, description="Preferred language for reading news."
+        default=Language.UNKNOWN, description="Preferred language for reading news."
     )
 
 
 class User(TimeStampedModel):
     """User model for the application."""
 
-    email: Indexed(EmailStr, unique=True)
-    username: Indexed(str, unique=True)
-    full_name: str
-    preferences: UserPreferences = Field(default_factory=UserPreferences)
+    email: Annotated[EmailStr, Indexed(unique=True)] = Field(
+        ..., description="Email address of the user"
+    )
+    username: Annotated[str, Indexed(unique=True)] = Field(
+        ..., description="Username of the user"
+    )
+    full_name: str = Field(..., description="Full name of the user")
+    preferences: UserPreferences = Field(default_factory=lambda: UserPreferences())
 
     class Settings:
         name = "users"
@@ -61,11 +72,16 @@ class Article(TimeStampedModel):
     source_id: UUIDstr = Field(
         ..., description="Reference to the Source this article belongs to"
     )
-    url: Indexed(str, unique=True)
-    publish_date: datetime
-    title: str
-    content: str
-    summary: str = ""
+    url: Annotated[str, Indexed(unique=True)] = Field(
+        ..., description="URL of the article"
+    )
+    publish_date: datetime = Field(
+        default_factory=lambda: datetime.now(UTC),
+        description="Publish date of the article",
+    )
+    title: str = Field(..., description="Title of the article")
+    content: str = Field(..., description="Content of the article")
+    summary: str = Field(default="", description="Summary of the article")
     language: Language = Language.UNKNOWN
 
     class Settings:
@@ -75,10 +91,12 @@ class Article(TimeStampedModel):
 class AggregatedStory(TimeStampedModel):
     """Model representing a clustered or aggregated news story."""
 
-    title: str
-    summary: str
-    language: Language
-    publish_date: datetime
+    title: str = Field(..., description="Title of the aggregated story")
+    summary: str = Field(..., description="Summary of the aggregated story")
+    language: Language = Field(..., description="Language of the aggregated story")
+    publish_date: datetime = Field(
+        ..., description="Publish date of the aggregated story"
+    )
     article_ids: list[UUIDstr] = Field(default_factory=list)
 
     class Settings:

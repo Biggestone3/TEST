@@ -1,11 +1,10 @@
 import unittest
 from datetime import UTC, datetime
 
+from lna_app.services.news_service import get_stories_paginated
 from lna_db.core.types import Language
-from lna_db.db.mock_db import get_mock_db, init_mock_db
+from lna_db.db.mock_db import init_mock_db
 from lna_db.models.news import AggregatedStory
-
-from lna_app.services.news_service import fetch_stories
 
 
 class TestNewsService(unittest.IsolatedAsyncioTestCase):
@@ -14,11 +13,10 @@ class TestNewsService(unittest.IsolatedAsyncioTestCase):
     async def asyncSetUp(self) -> None:
         """Set up test database before each test."""
         await init_mock_db()
-        self.db = await get_mock_db()
         # Clear all stories before each test
         await AggregatedStory.delete_all()
 
-    async def test_fetch_stories_with_data(self):
+    async def test_fetch_stories_with_data(self) -> None:
         """Test fetching stories when data exists."""
         # Add test data
         test_story = {
@@ -32,24 +30,24 @@ class TestNewsService(unittest.IsolatedAsyncioTestCase):
         await story.save()
 
         # Fetch stories
-        stories = await fetch_stories(self.db)
+        stories = await get_stories_paginated()
 
         self.assertEqual(len(stories), 1)
         self.assertEqual(stories[0].title, test_story["title"])
         self.assertEqual(stories[0].summary, test_story["summary"])
         self.assertEqual(stories[0].language, test_story["language"])
 
-    async def test_fetch_stories_empty(self):
+    async def test_fetch_stories_empty(self) -> None:
         """Test fetching stories when no data exists."""
         # Clear all stories
         await AggregatedStory.delete_all()
 
         # Fetch stories
-        stories = await fetch_stories(self.db)
+        stories = await get_stories_paginated()
 
         self.assertEqual(len(stories), 0)
 
-    async def test_fetch_stories_multiple(self):
+    async def test_fetch_stories_multiple(self) -> None:
         """Test fetching multiple stories."""
         # Add multiple test stories
         test_stories = [
@@ -68,7 +66,7 @@ class TestNewsService(unittest.IsolatedAsyncioTestCase):
             await story.save()
 
         # Fetch stories
-        stories = await fetch_stories(self.db)
+        stories = await get_stories_paginated()
 
         self.assertEqual(len(stories), 3)
         self.assertEqual(

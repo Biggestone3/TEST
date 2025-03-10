@@ -4,9 +4,10 @@ version = "0.1.0"
 description = "LNA Backend Monorepo"
 authors = ["Your Name <your.email@example.com>"]
 readme = "README.md"
+package-mode = false
 
 [tool.poetry.dependencies]
-python = "^3.8"
+python = ">=3.13, <4.0"
 
 [tool.poetry.group.dev.dependencies]
 pyre-check = "^0.9.23"

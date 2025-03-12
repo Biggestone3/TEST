@@ -1,24 +1,24 @@
 {
-<<<<<<< HEAD
+
   "name": "lna-frontend",
 =======
   "name": "frontend",
->>>>>>> a67de4a2259f5daff532e88dda9143329b05b009
+
   "private": true,
   "version": "0.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
-<<<<<<< HEAD
+
     "build": "vite build",
-=======
+
     "build": "tsc -b && vite build",
->>>>>>> a67de4a2259f5daff532e88dda9143329b05b009
+
     "lint": "eslint .",
     "preview": "vite preview"
   },
   "dependencies": {
-<<<<<<< HEAD
+
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
     "@mui/icons-material": "^6.4.4",
@@ -28,30 +28,30 @@
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "styled-components": "^6.1.14"
-=======
+
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
->>>>>>> a67de4a2259f5daff532e88dda9143329b05b009
+
   },
   "devDependencies": {
     "@eslint/js": "^9.17.0",
     "@types/react": "^18.3.18",
     "@types/react-dom": "^18.3.5",
-<<<<<<< HEAD
+
     "@vitejs/plugin-react-swc": "^3.5.0",
-=======
+
     "@vitejs/plugin-react": "^4.3.4",
->>>>>>> a67de4a2259f5daff532e88dda9143329b05b009
+
     "eslint": "^9.17.0",
     "eslint-plugin-react-hooks": "^5.0.0",
     "eslint-plugin-react-refresh": "^0.4.16",
     "globals": "^15.14.0",
     "typescript": "~5.6.2",
     "typescript-eslint": "^8.18.2",
-<<<<<<< HEAD
+
     "vite": "^6.1.0"
-=======
+
     "vite": "^6.0.5"
->>>>>>> a67de4a2259f5daff532e88dda9143329b05b009
+
   }
 }

@@ -1,0 +1,23 @@
+repos:
+  - repo: https://github.com/charliermarsh/ruff-pre-commit
+    rev: v0.9.7
+    hooks:
+      - id: ruff
+        args: [--fix]
+      - id: ruff-format
+
+  - repo: local
+    hooks:
+      - id: pyre
+        name: pyre
+        entry: bash -c 'cd backend && export PYTHONPATH=$PYTHONPATH:$(pwd) && poetry install && cd lna-db && poetry install && cd ../lna-app && poetry install && cd ../lna-crawlers && poetry install && cd .. && poetry run pyre check'
+        language: system
+        types: [python]
+        pass_filenames: false
+
+      - id: pyright
+        name: pyright
+        entry: bash -c 'cd backend && export PYTHONPATH=$PYTHONPATH:$(pwd) && poetry install && cd lna-db && poetry install && cd ../lna-app && poetry install && cd ../lna-crawlers && poetry install && cd .. && poetry run pyright'
+        language: system
+        types: [python]
+        pass_filenames: false 

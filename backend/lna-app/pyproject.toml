@@ -2,11 +2,9 @@
 name = "lna-app"
 version = "0.1.0"
 description = ""
-authors = [
-    {name = "Your Name",email = "you@example.com"}
-]
+authors = [{ name = "Your Name", email = "you@example.com" }]
 readme = "README.md"
-requires-python = ">=3.13,<4.0"
+requires-python = ">=3.11,<4.0"
 dependencies = [
     "fastapi (>=0.115.7,<0.116.0)",
     "uvicorn (>=0.34.0,<0.35.0)",
@@ -16,7 +14,7 @@ dependencies = [
     "pydantic[email] (>=2.10.6,<3.0.0)",
     "python-dotenv (>=1.0.1,<2.0.0)",
     "beanie (>=1.29.0,<2.0.0)",
-    "mongomock-motor (>=0.0.35,<0.0.36)"
+    "mongomock-motor (>=0.0.35,<0.0.36)",
 ]
 
 
@@ -25,9 +23,4 @@ requires = ["poetry-core>=2.0.0,<3.0.0"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.group.dev.dependencies]
-pyre-check = "^0.9.23"
-ruff = "^0.9.7"
-pre-commit = "^4.1.0"
-pyright = "^1.1.394"
-httpx = "^0.28.1"
-
+lna-db = { path = "../lna-db", develop = true }

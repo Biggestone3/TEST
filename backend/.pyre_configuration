@@ -1,0 +1,49 @@
+{
+  "source_directories": [
+    "lna-app",
+    "lna-db",
+    "lna-crawlers"
+  ],
+  "search_path": [
+    {
+      "site-package": "fastapi"
+    },
+    {
+      "site-package": "motor"
+    },
+    {
+      "site-package": "pydantic"
+    },
+    {
+      "site-package": "pymongo"
+    },
+    {
+      "site-package": "mongomock"
+    },
+    {
+      "site-package": "pytest"
+    },
+    {
+      "site-package": "uvicorn"
+    },
+    {
+      "site-package": "starlette"
+    },
+    {
+      "site-package": "beanie"
+    },
+    {
+      "site-package": "mongomock_motor"
+    },
+    {
+      "site-package": "dotenv"
+    }
+  ],
+  "exclude": [
+    "tests/",
+    "venv/",
+    "migrations/"
+  ],
+  "strict": true,
+  "python_version": "3.13"
+}

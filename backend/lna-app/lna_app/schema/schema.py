@@ -1,9 +1,8 @@
 from datetime import datetime
 from uuid import uuid4
 
+from lna_db.core.types import Language, UUIDstr
 from pydantic import BaseModel, EmailStr, Field
-
-from lna_app.core.types import Language, UUIDstr
 
 
 class UserPreferences(BaseModel):
@@ -20,7 +19,7 @@ class UserPreferences(BaseModel):
         default_factory=list, description="List of Source IDs that the user follows."
     )
     language: Language = Field(
-        Language.UNKNOWN, description="Preferred language for reading news."
+        default=Language.UNKNOWN, description="Preferred language for reading news."
     )
 
 
@@ -39,7 +38,7 @@ class User(BaseModel):
     )
     email: EmailStr = Field(..., description="User's email address.")
     preferences: UserPreferences = Field(
-        default_factory=UserPreferences,
+        default_factory=lambda: UserPreferences(),
         description="User's saved preferences (sources followed, language).",
     )
 

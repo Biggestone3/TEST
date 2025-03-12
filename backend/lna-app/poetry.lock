@@ -27,6 +27,7 @@ files = [
 [package.dependencies]
 idna = ">=2.8"
 sniffio = ">=1.1"
+typing_extensions = {version = ">=4.5", markers = "python_version < \"3.13\""}
 
 [package.extras]
 doc = ["Sphinx (>=7.4,<8.0)", "packaging", "sphinx-autodoc-typehints (>=1.2.0)", "sphinx_rtd_theme"]
@@ -198,7 +199,7 @@ name = "lna-db"
 version = "0.1.0"
 description = "Database module for LNA"
 optional = false
-python-versions = ">=3.13, <4.0"
+python-versions = ">=3.11, <4.0"
 groups = ["dev"]
 files = []
 develop = true
@@ -616,5 +617,5 @@ standard = ["colorama (>=0.4)", "httptools (>=0.6.3)", "python-dotenv (>=0.13)",
 
 [metadata]
 lock-version = "2.1"
-python-versions = ">=3.13,<4.0"
-content-hash = "ef2abdb07485a6b53a2d82b39dbc98858bd6fe8ca6aca792d12364273ff1a1ed"
+python-versions = ">=3.11,<4.0"
+content-hash = "83ca129b5c16de6beea73564c3bb2f3b2ebe86b6b421871342c8da26573e5650"

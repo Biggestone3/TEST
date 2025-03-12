@@ -4,7 +4,7 @@
 
 ### Prerequisites
 
-- Python 3.13 or higher
+- Python 3.11 or higher
 - Poetry (Python package manager)
 
 ### Installation

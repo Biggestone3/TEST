@@ -113,7 +113,7 @@ name = "lna-db"
 version = "0.1.0"
 description = "Database module for LNA"
 optional = false
-python-versions = ">=3.13, <4.0"
+python-versions = ">=3.11, <4.0"
 groups = ["dev"]
 files = []
 develop = true
@@ -395,5 +395,5 @@ files = [
 
 [metadata]
 lock-version = "2.1"
-python-versions = ">=3.13, <4.0"
-content-hash = "81291271291dbac30e7b6dfc3da65bf8ffeb8cf8654f71f5e539bcf4ba64fbf4"
+python-versions = ">=3.11, <4.0"
+content-hash = "bbd512f794b150eeb8e0df5718dca0e938d094cdc62f69f56ec0f1f5d02503c9"

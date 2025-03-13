@@ -33,7 +33,7 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-app.include_router(news.router, prefix="/news")
+app.include_router(news.router, prefix="/api/news")
 
 if __name__ == "__main__":
     import uvicorn

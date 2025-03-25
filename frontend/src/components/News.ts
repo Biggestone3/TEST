@@ -1,10 +1,10 @@
 export class News {
   constructor(
     public title: string,
-    public content: string,
+    public summary: string,
+    public language: 'ar' | 'en',
     public imageUrl: string | { default: string }, 
-    public details: string,
     public sources: Array<{ name: string; url: string }>,
-    public date: Date
+    public publish_date: Date
   ) {}
 }

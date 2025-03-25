@@ -1,12 +1,30 @@
 import Box from '@mui/material/Box';
 import NewsCard from './NewsCard';
-import newsItemsByLang from './content';
+import { fetchNews } from "../services/newsService";
+import { useEffect, useState } from 'react';
 
 interface NewsStackProps {
   language: 'en' | 'ar';
 }
 
 export default function NewsStack({ language }: NewsStackProps) {
+    const [news, setNews] = useState<any[]>([]);
+    const [loading, setLoading] = useState<boolean>(true);
+
+    useEffect(() => {
+        async function loadNews() {
+            setLoading(true);
+            const newsData = await fetchNews();
+            if (newsData) setNews(newsData);
+            setLoading(false);
+        }
+
+        loadNews();
+    }, []);
+
+    if (loading) return <p>Loading news...</p>;
+    if (!news.length) return <p>No news available</p>;
+
   return (
     <Box sx={{
       display: 'flex',
@@ -15,12 +33,10 @@ export default function NewsStack({ language }: NewsStackProps) {
       justifyContent: 'center',
       width: '90vw', 
       maxWidth: '100%',
-      
       padding: 3,
       direction: language === 'ar' ? 'rtl' : 'ltr' ,
-      
     }}>
-      {newsItemsByLang[language]?.map((newsItem, index) => (
+      {news.map((newsItem, index) => (
         <Box key={index} sx={{ 
           width: '100%',
           maxWidth: 1200,

@@ -39,16 +39,9 @@ class UserPreferences(Document):
         default=Language.UNKNOWN, description="Preferred language for reading news."
     )
 
-def default_preferences():
-    return UserPreferences(
-        language=Language.ENGLISH,
-        source_ids=["source1", "source2"]
-    )
-
 class User(TimeStampedModel):
     """User model for the application."""
     id: ObjectId = Field(alias="_id")
-    #id: ObjectId
     email: Annotated[EmailStr, Indexed(unique=True)] = Field(
         ..., description="Email address of the user"
     )
@@ -56,7 +49,7 @@ class User(TimeStampedModel):
         ..., description="Username of the user"
     )
     full_name: str = Field(..., description="Full name of the user")
-    preferences: UserPreferences = Field(default_factory=default_preferences)
+    preferences: UserPreferences = Field(default_factory=lambda: UserPreferences())
     class Config:
         arbitrary_types_allowed = True
     class Settings:

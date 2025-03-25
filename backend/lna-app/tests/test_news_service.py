@@ -13,8 +13,8 @@ class TestNewsService(unittest.IsolatedAsyncioTestCase):
 
     async def asyncSetUp(self) -> None:
         """Set up test database before each test."""
-        # await init_mock_db()
-        await init_database()
+        await init_mock_db()
+        # await init_database()
         # Clear all stories before each test
         await AggregatedStory.delete_all()
 

@@ -22,13 +22,8 @@ from lna_app.services.news_service import (
     create_user,
     create_source,
 )
-from lna_db.db.mongo import init_database  # Ensure database is initialized
 app = FastAPI()
 router = APIRouter()
-
-@app.on_event("startup")
-async def startup_event():
-    await init_database()  # Initialize DB when the app starts
 
 @router.get("/stories", response_model=AggregatedStoryListResponse)
 async def get_stories() -> AggregatedStoryListResponse:

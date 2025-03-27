@@ -37,6 +37,9 @@ class User(BaseModel):
     id: UUIDstr = Field(
         default_factory=uuid4,alias='_id', description="Unique identifier for the user (UUID)."
     )
+    uuid: UUIDstr = Field(
+        default_factory=uuid4, description="Unique identifier for the article (UUID)."
+    )
     email: EmailStr = Field(..., description="User's email address.")
     username: Annotated[str, Indexed(unique=True)] = Field(
         ..., description="Username of the user"
@@ -57,6 +60,9 @@ class Source(BaseModel):
 
     id: UUIDstr = Field(
         default_factory=uuid4,alias='_id', description="Unique identifier for the source (UUID)."
+    )
+    uuid: UUIDstr = Field(
+        default_factory=uuid4, description="Unique identifier for the article (UUID)."
     )
     name: str = Field(
         ..., description="Display name of the source (e.g., 'Daily Star Lebanon')."
@@ -82,6 +88,9 @@ class Article(BaseModel):
 
     id: UUIDstr = Field(
         default_factory=uuid4,alias='_id', description="Unique identifier for the article (UUID)."
+    )
+    uuid: UUIDstr = Field(
+        default_factory=uuid4, description="Unique identifier for the article (UUID)."
     )
     source_id: UUIDstr = Field(
         ..., description="Reference to the Source.id this article belongs to."
@@ -116,6 +125,9 @@ class AggregatedStory(BaseModel):
         default_factory=uuid4,
         alias='_id',
         description="Unique identifier for the aggregated story (UUID).",
+    )
+    uuid: UUIDstr = Field(
+        default_factory=uuid4, description="Unique identifier for the article (UUID)."
     )
     title: str = Field(..., description="Descriptive title for the aggregated story.")
     summary: str = Field(

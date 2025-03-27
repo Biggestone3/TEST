@@ -24,14 +24,17 @@ async def get_stories_paginated(skip: int = 0, limit: int = 10) -> list[Aggregat
 
 async def get_users_paginated(skip: int = 0, limit: int = 10) -> list[User]:
     db_users = await DbUser.find().skip(skip).limit(limit).to_list()
+    users = [user.model_dump() for user in db_users]
     return [User(**user.model_dump()) for user in db_users]
 
 async def get_sources_paginated(skip: int = 0, limit: int = 10) -> list[Source]:
     db_sources = await DbSource.find().skip(skip).limit(limit).to_list()
+    sources = [source.model_dump() for source in db_sources]
     return [Source(**source.model_dump()) for source in db_sources]
 
 async def get_articles_paginated(skip: int = 0, limit: int = 10) -> list[Article]:
     db_articles = await DbArticle.find().skip(skip).limit(limit).to_list()
+    articles = [source.model_dump() for source in db_articles]
     return [Article(**article.model_dump()) for article in db_articles]
 
 async def create_user(user_data: UserCreate):
@@ -87,3 +90,44 @@ async def create_aggregated_story(story_data: AggregatedStoryCreate):
     )
     await db_story.insert()
     return True
+
+
+
+from uuid import UUID
+
+async def get_stories_enriched():
+    db_stories = await DbAggregatedStory.find_all().to_list()
+    enriched_stories = []
+
+    for story in db_stories:
+        # Convert to UUIDs just in case they're strings
+        article_ids = [str(aid) for aid in story.article_ids]
+        articles = await DbArticle.find({"uuid": {"$in": article_ids}}).to_list()
+
+        source_ids = [str(article.source_id) for article in articles]
+        sources = await DbSource.find({"uuid": {"$in": source_ids}}).to_list()
+        source_map = {
+            str(source.uuid): {
+                "name": source.name,
+                "url": source.url
+            }
+            for source in sources
+        }
+        enriched_articles = [
+            {
+                "id": str(article.uuid),
+                "source_name": source_map.get(str(article.source_id), {}).get("name", "Unknown Source"),
+                "source_url": source_map.get(str(article.source_id), {}).get("url", None),
+            }
+            for article in articles
+        ]
+        enriched_stories.append({
+            "id": str(story.id),
+            "title": story.title,
+            "summary": story.summary,
+            "language": story.language.value,
+            "publish_date": story.publish_date.isoformat(),
+            "articles": enriched_articles,
+        })
+
+    return {"enriched_stories": enriched_stories}

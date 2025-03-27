@@ -21,6 +21,7 @@ from lna_app.services.news_service import (
     create_article,
     create_user,
     create_source,
+    get_stories_enriched,
 )
 app = FastAPI()
 router = APIRouter()
@@ -73,4 +74,8 @@ async def create_story_endpoint(story_data: AggregatedStoryCreate):
     new_story = await create_aggregated_story(story_data)
     return True
 
+@router.get("/stories_testing")
+async def get_stories():
+    """Fetch stories enriched with article source names and url of each source."""
+    return await get_stories_enriched()
 app.include_router(router)

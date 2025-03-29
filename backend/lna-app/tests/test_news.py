@@ -22,7 +22,7 @@ class TestNewsAPI(unittest.IsolatedAsyncioTestCase):
 
     def test_get_stories(self) -> None:
         """Test fetching stories from the API using get_mock_db()."""
-        response = self.client.get("/news/stories")
+        response = self.client.get("api/news/stories")
         self.assertEqual(response.status_code, 200)
         data = response.json()
 
@@ -33,7 +33,7 @@ class TestNewsAPI(unittest.IsolatedAsyncioTestCase):
     async def test_get_stories_empty(self) -> None:
         """Test when the database returns no stories."""
         await AggregatedStory.delete_all()
-        response = self.client.get("/news/stories")
+        response = self.client.get("api/news/stories")
         self.assertEqual(response.status_code, 200)
         data = response.json()
 

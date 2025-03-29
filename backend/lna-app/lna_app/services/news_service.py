@@ -95,6 +95,7 @@ async def create_aggregated_story(story_data: AggregatedStoryCreate):
 
 from uuid import UUID
 
+
 async def get_stories_enriched():
     db_stories = await DbAggregatedStory.find_all().to_list()
     enriched_stories = []
@@ -108,6 +109,7 @@ async def get_stories_enriched():
         sources = await DbSource.find({"uuid": {"$in": source_ids}}).to_list()
         source_map = {
             str(source.uuid): {
+
                 "name": source.name,
                 "url": source.url
             }
@@ -121,6 +123,7 @@ async def get_stories_enriched():
             }
             for article in articles
         ]
+
         enriched_stories.append({
             "id": str(story.id),
             "title": story.title,
@@ -131,3 +134,4 @@ async def get_stories_enriched():
         })
 
     return {"enriched_stories": enriched_stories}
+

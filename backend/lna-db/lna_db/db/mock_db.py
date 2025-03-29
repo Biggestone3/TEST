@@ -14,26 +14,35 @@ db: AsyncMongoMockDatabase = client.get_database("test_database")
 # Sample data with fixed UUIDs for testing
 source_id: UUID = UUID("550e8400-e29b-41d4-a716-446655440000")
 arabic_source_id: UUID = UUID("660e8400-e29b-41d4-a716-446655440000")
+extra_source_id = UUID("770e8400-e29b-41d4-a716-446655440000")
+extra_arabic_source_id = UUID("880e8400-e29b-41d4-a716-446655440000")
 
 article_1_id: UUID = UUID("a631c8c8-5943-4d7d-b7bc-6d7f8e569e6b")
 article_2_id: UUID = UUID("b724d849-5ad3-4e42-a29c-50049c6f4b38")
 arabic_article_1_id: UUID = UUID("d631c8c8-5943-4d7d-b7bc-6d7f8e569e6b")
 arabic_article_2_id: UUID = UUID("e724d849-5ad3-4e42-a29c-50049c6f4b38")
+extra_article_en_id = UUID("f824d849-5ad3-4e42-a29c-50049c6f4b38")
+extra_article_ar_id = UUID("b924d849-5ad3-4e42-a29c-50049c6f4b38")
 
+# New sources and articles
+new_source_id_1 = UUID("990e8400-e29b-41d4-a716-446655440000")
+new_source_id_2 = UUID("aa0e8400-e29b-41d4-a716-446655440000")
+new_source_id_3 = UUID("bb0e8400-e29b-41d4-a716-446655440000")
+
+new_article_1_id = UUID("c824d849-5ad3-4e42-a29c-50049c6f4b38")
+new_article_2_id = UUID("d824d849-5ad3-4e42-a29c-50049c6f4b38")
+new_article_3_id = UUID("e824d849-5ad3-4e42-a29c-50049c6f4b38")
 
 def get_mock_data() -> tuple[list[Source], list[Article], list[AggregatedStory]]:
     """Get the mock data for testing."""
     mock_sources = [
-        Source(
-            id=source_id,
-            name="Global News Network",
-            url="https://news.com",
-        ),
-        Source(
-            id=arabic_source_id,
-            name="الشبكة الإخبارية العربية",
-            url="https://arabnews.com",
-        ),
+        Source(id=source_id, name="Global News Network", url="https://news.com"),
+        Source(id=arabic_source_id, name="الشبكة الإخبارية العربية", url="https://arabnews.com"),
+        Source(id=extra_source_id, name="Daily Bulletin", url="https://dailybulletin.com"),
+        Source(id=extra_arabic_source_id, name="صحيفة اليوم", url="https://alyaum.com"),
+        Source(id=new_source_id_1, name="Tech Review", url="https://techreview.com"),
+        Source(id=new_source_id_2, name="Middle East Times", url="https://metimes.com"),
+        Source(id=new_source_id_3, name="World Watch", url="https://worldwatch.com"),
     ]
 
     mock_articles = [
@@ -58,6 +67,16 @@ def get_mock_data() -> tuple[list[Source], list[Article], list[AggregatedStory]]
             language=Language.ENGLISH,
         ),
         Article(
+            id=extra_article_en_id,
+            source_id=extra_source_id,
+            title="More AI News",
+            content="Another perspective on AI",
+            summary="Another perspective on AI",
+            url="https://dailybulletin.com/ai",
+            publish_date=datetime(2024, 3, 15, 13, 30, tzinfo=UTC),
+            language=Language.ENGLISH,
+        ),
+        Article(
             id=arabic_article_1_id,
             source_id=arabic_source_id,
             title="تطورات التكنولوجيا",
@@ -77,6 +96,46 @@ def get_mock_data() -> tuple[list[Source], list[Article], list[AggregatedStory]]
             publish_date=datetime(2024, 3, 15, 14, 0, tzinfo=UTC),
             language=Language.ARABIC,
         ),
+        Article(
+            id=extra_article_ar_id,
+            source_id=extra_arabic_source_id,
+            title="تقرير خاص عن الذكاء الاصطناعي",
+            content="وجهة نظر جديدة حول الذكاء الاصطناعي",
+            summary="وجهة نظر جديدة",
+            url="https://alyaum.com/ai",
+            publish_date=datetime(2024, 3, 15, 14, 30, tzinfo=UTC),
+            language=Language.ARABIC,
+        ),
+        Article(
+            id=new_article_1_id,
+            source_id=new_source_id_1,
+            title="Quantum Computing Breakthrough",
+            content="Scientists achieved a new milestone in quantum computing...",
+            summary="Quantum computing steps forward",
+            url="https://techreview.com/quantum",
+            publish_date=datetime(2024, 3, 15, 15, 0, tzinfo=UTC),
+            language=Language.ENGLISH,
+        ),
+        Article(
+            id=new_article_2_id,
+            source_id=new_source_id_2,
+            title="أخبار اقتصادية",
+            content="تقرير عن الاقتصاد في الشرق الأوسط...",
+            summary="تحليل اقتصادي جديد",
+            url="https://metimes.com/economy",
+            publish_date=datetime(2024, 3, 15, 15, 30, tzinfo=UTC),
+            language=Language.ARABIC,
+        ),
+        Article(
+            id=new_article_3_id,
+            source_id=new_source_id_3,
+            title="Climate Change Update",
+            content="A new UN report highlights climate progress and challenges...",
+            summary="UN releases climate report",
+            url="https://worldwatch.com/climate",
+            publish_date=datetime(2024, 3, 15, 16, 0, tzinfo=UTC),
+            language=Language.ENGLISH,
+        ),
     ]
 
     mock_stories = [
@@ -86,7 +145,7 @@ def get_mock_data() -> tuple[list[Source], list[Article], list[AggregatedStory]]
             summary="Latest developments and predictions in technology and AI",
             language=Language.ENGLISH,
             publish_date=datetime(2024, 3, 15, 12, 30, tzinfo=UTC),
-            article_ids=[article_1_id, article_2_id],
+            article_ids=[article_1_id, article_2_id, extra_article_en_id, new_article_1_id, new_article_3_id],
         ),
         AggregatedStory(
             id=UUID("d834d941-4fd2-4819-a3b7-7cc8971ab25e"),
@@ -94,7 +153,7 @@ def get_mock_data() -> tuple[list[Source], list[Article], list[AggregatedStory]]
             summary="آخر التطورات والتوقعات في مجال التكنولوجيا والذكاء الاصطناعي",
             language=Language.ARABIC,
             publish_date=datetime(2024, 3, 15, 13, 30, tzinfo=UTC),
-            article_ids=[arabic_article_1_id, arabic_article_2_id],
+            article_ids=[arabic_article_1_id, arabic_article_2_id, extra_article_ar_id, new_article_2_id],
         ),
     ]
 

@@ -1,4 +1,3 @@
-from bson import ObjectId
 from datetime import UTC, datetime
 from typing import Annotated, Any, Self
 from uuid import UUID, uuid4
@@ -8,10 +7,11 @@ from pydantic import EmailStr, Field
 
 from lna_db.core.types import Language, UUIDstr
 
+
 class TimeStampedModel(Document):
     """Base model with created and updated timestamps."""
 
-    # id: UUID = Field(default_factory=uuid4,alias='_id')  # pyre-ignore
+    id: UUID = Field(default_factory=uuid4)  # pyre-ignore
     created_at: datetime = Field(
         default_factory=lambda: datetime.now(UTC),
         description="Timestamp when the model was created",
@@ -39,10 +39,10 @@ class UserPreferences(Document):
         default=Language.UNKNOWN, description="Preferred language for reading news."
     )
 
+
 class User(TimeStampedModel):
     """User model for the application."""
-    id: ObjectId = Field(alias="_id")
-    uuid: UUID = Field(default_factory=uuid4)
+
     email: Annotated[EmailStr, Indexed(unique=True)] = Field(
         ..., description="Email address of the user"
     )
@@ -51,30 +51,35 @@ class User(TimeStampedModel):
     )
     full_name: str = Field(..., description="Full name of the user")
     preferences: UserPreferences = Field(default_factory=lambda: UserPreferences())
-    class Config:
-        arbitrary_types_allowed = True
+
     class Settings:
         name = "users"
 
 
 class Source(TimeStampedModel):
     """News source model."""
-    id: ObjectId = Field(alias="_id")
-    uuid: UUID = Field(default_factory=uuid4)
+
     name: str = Field(..., description="Display name of the source")
     url: str = Field(..., description="URL associated with this source")
-    class Config:
-        arbitrary_types_allowed = True
+    content_html_key: tuple[str, str] = Field(
+        default=("", ""), description="The place to get info from the actual webpage."
+    )
+    has_rss: bool = Field(
+        default=True,
+        description="Boolean value that determines whether "
+        "a webpage has an RSS value or not.",
+    )
+
     class Settings:
         name = "sources"
+
+
 
 class Article(TimeStampedModel):
     """Article model representing a news article."""
 
-    id: ObjectId = Field(alias="_id")
-    uuid: UUID = Field(default_factory=uuid4)
     source_id: UUIDstr = Field(
-       ..., description="Reference to the Source this article belongs to"
+        ..., description="Reference to the Source this article belongs to"
     )
     url: Annotated[str, Indexed(unique=True)] = Field(
         ..., description="URL of the article"
@@ -85,20 +90,16 @@ class Article(TimeStampedModel):
     )
     title: str = Field(..., description="Title of the article")
     content: str = Field(..., description="Content of the article")
-    # category: str = Field(..., description="Category of the article")
-    # summary: str = Field(default="", description="Summary of the article")
+    summary: str = Field(default="", description="Summary of the article")
     language: Language = Language.UNKNOWN
-    class Config:
-        arbitrary_types_allowed = True
+
     class Settings:
         name = "articles"
 
 
-
 class AggregatedStory(TimeStampedModel):
     """Model representing a clustered or aggregated news story."""
-    id: ObjectId = Field(alias="_id")
-    uuid: UUID = Field(default_factory=uuid4)
+
     title: str = Field(..., description="Title of the aggregated story")
     summary: str = Field(..., description="Summary of the aggregated story")
     language: Language = Field(..., description="Language of the aggregated story")
@@ -106,7 +107,6 @@ class AggregatedStory(TimeStampedModel):
         ..., description="Publish date of the aggregated story"
     )
     article_ids: list[UUIDstr] = Field(default_factory=list)
-    class Config:
-        arbitrary_types_allowed = True
+
     class Settings:
         name = "stories"

@@ -1,0 +1,8 @@
+{
+  "version": "2.0",
+  "functions": [
+    "MyTimerFunction"
+  ],
+  
+  "functionTimeout": "00:05:00"
+}

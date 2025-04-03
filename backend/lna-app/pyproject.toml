@@ -15,7 +15,6 @@ dependencies = [
     "python-dotenv (>=1.0.1,<2.0.0)",
     "beanie (>=1.29.0,<2.0.0)",
     "mongomock-motor (>=0.0.35,<0.0.36)",
-    "httpx (>=0.28.1,<0.29.0)",
 ]
 
 

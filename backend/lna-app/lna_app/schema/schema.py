@@ -1,7 +1,6 @@
 from datetime import datetime
 from uuid import uuid4
-from typing import Annotated
-from beanie import Indexed
+
 from lna_db.core.types import Language, UUIDstr
 from pydantic import BaseModel, EmailStr, Field
 
@@ -35,17 +34,13 @@ class User(BaseModel):
     """
 
     id: UUIDstr = Field(
-        default_factory=uuid4,alias='_id', description="Unique identifier for the user (UUID)."
-    )
-    uuid: UUIDstr = Field(
-        default_factory=uuid4, description="Unique identifier for the article (UUID)."
+        default_factory=uuid4, description="Unique identifier for the user (UUID)."
     )
     email: EmailStr = Field(..., description="User's email address.")
-    username: Annotated[str, Indexed(unique=True)] = Field(
-        ..., description="Username of the user"
+    preferences: UserPreferences = Field(
+        default_factory=lambda: UserPreferences(),
+        description="User's saved preferences (sources followed, language).",
     )
-    full_name: str = Field(..., description="Full name of the user")
-    preferences: UserPreferences = Field(default_factory=lambda: UserPreferences())
 
 
 class Source(BaseModel):
@@ -59,10 +54,7 @@ class Source(BaseModel):
     """
 
     id: UUIDstr = Field(
-        default_factory=uuid4,alias='_id', description="Unique identifier for the source (UUID)."
-    )
-    uuid: UUIDstr = Field(
-        default_factory=uuid4, description="Unique identifier for the article (UUID)."
+        default_factory=uuid4, description="Unique identifier for the source (UUID)."
     )
     name: str = Field(
         ..., description="Display name of the source (e.g., 'Daily Star Lebanon')."
@@ -87,9 +79,6 @@ class Article(BaseModel):
     """
 
     id: UUIDstr = Field(
-        default_factory=uuid4,alias='_id', description="Unique identifier for the article (UUID)."
-    )
-    uuid: UUIDstr = Field(
         default_factory=uuid4, description="Unique identifier for the article (UUID)."
     )
     source_id: UUIDstr = Field(
@@ -123,11 +112,7 @@ class AggregatedStory(BaseModel):
 
     id: UUIDstr = Field(
         default_factory=uuid4,
-        alias='_id',
         description="Unique identifier for the aggregated story (UUID).",
-    )
-    uuid: UUIDstr = Field(
-        default_factory=uuid4, description="Unique identifier for the article (UUID)."
     )
     title: str = Field(..., description="Descriptive title for the aggregated story.")
     summary: str = Field(
@@ -150,49 +135,3 @@ class AggregatedStoryListResponse(BaseModel):
     stories: list[AggregatedStory] = Field(
         ..., description="List of aggregated stories."
     )
-
-class UserListResponse(BaseModel):
-    """
-    Represents a list of users.
-    """
-    users: list[User] = Field(..., description="List of users.")
-
-
-class SourceListResponse(BaseModel):
-    """
-    Represents a list of sources.
-    """
-    sources: list[Source] = Field(..., description="List of news sources.")
-
-
-class ArticleListResponse(BaseModel):
-    """
-    Represents a list of articles.
-    """
-    articles: list[Article] = Field(..., description="List of articles.")
-
-
-class UserCreate(BaseModel):
-    email: EmailStr
-    username: str
-    full_name: str
-    preferences: dict = {}  # Optional preferences
-
-class SourceCreate(BaseModel):
-    name: str
-    url: str
-
-class ArticleCreate(BaseModel):
-    source_id: UUIDstr
-    url: str
-    publish_date: datetime
-    title: str
-    content: str
-    language: str
-
-class AggregatedStoryCreate(BaseModel):
-    title: str
-    summary: str
-    language: str
-    publish_date: datetime
-    article_ids: list[UUIDstr]

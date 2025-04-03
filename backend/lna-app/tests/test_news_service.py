@@ -5,6 +5,7 @@ from lna_app.services.news_service import get_stories_paginated
 from lna_db.core.types import Language
 from lna_db.db.mock_db import init_mock_db
 from lna_db.models.news import AggregatedStory
+from lna_db.db.mongo import init_database
 
 
 class TestNewsService(unittest.IsolatedAsyncioTestCase):
@@ -13,6 +14,7 @@ class TestNewsService(unittest.IsolatedAsyncioTestCase):
     async def asyncSetUp(self) -> None:
         """Set up test database before each test."""
         await init_mock_db()
+        # await init_database()
         # Clear all stories before each test
         await AggregatedStory.delete_all()
 

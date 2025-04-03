@@ -5,7 +5,6 @@ from dotenv import load_dotenv
 from fastapi import FastAPI
 from lna_db.db.mock_db import init_mock_db
 from lna_db.db.mongo import init_database
-
 from lna_app.api import news
 
 

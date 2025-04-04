@@ -33,12 +33,19 @@ new_article_1_id = UUID("c824d849-5ad3-4e42-a29c-50049c6f4b38")
 new_article_2_id = UUID("d824d849-5ad3-4e42-a29c-50049c6f4b38")
 new_article_3_id = UUID("e824d849-5ad3-4e42-a29c-50049c6f4b38")
 
+
 def get_mock_data() -> tuple[list[Source], list[Article], list[AggregatedStory]]:
     """Get the mock data for testing."""
     mock_sources = [
         Source(id=source_id, name="Global News Network", url="https://news.com"),
-        Source(id=arabic_source_id, name="الشبكة الإخبارية العربية", url="https://arabnews.com"),
-        Source(id=extra_source_id, name="Daily Bulletin", url="https://dailybulletin.com"),
+        Source(
+            id=arabic_source_id,
+            name="الشبكة الإخبارية العربية",
+            url="https://arabnews.com",
+        ),
+        Source(
+            id=extra_source_id, name="Daily Bulletin", url="https://dailybulletin.com"
+        ),
         Source(id=extra_arabic_source_id, name="صحيفة اليوم", url="https://alyaum.com"),
         Source(id=new_source_id_1, name="Tech Review", url="https://techreview.com"),
         Source(id=new_source_id_2, name="Middle East Times", url="https://metimes.com"),
@@ -51,7 +58,6 @@ def get_mock_data() -> tuple[list[Source], list[Article], list[AggregatedStory]]
             source_id=source_id,
             title="Breaking News",
             content="Something big happened! Here's the full story...",
-            summary="Something big happened!",
             url="https://news.com/breaking",
             publish_date=datetime(2024, 3, 15, 12, 30, tzinfo=UTC),
             language=Language.ENGLISH,
@@ -61,7 +67,6 @@ def get_mock_data() -> tuple[list[Source], list[Article], list[AggregatedStory]]
             source_id=source_id,
             title="Technology Update",
             content="New advancements in AI and technology...",
-            summary="Latest tech developments",
             url="https://news.com/tech",
             publish_date=datetime(2024, 3, 15, 13, 0, tzinfo=UTC),
             language=Language.ENGLISH,
@@ -71,7 +76,6 @@ def get_mock_data() -> tuple[list[Source], list[Article], list[AggregatedStory]]
             source_id=extra_source_id,
             title="More AI News",
             content="Another perspective on AI",
-            summary="Another perspective on AI",
             url="https://dailybulletin.com/ai",
             publish_date=datetime(2024, 3, 15, 13, 30, tzinfo=UTC),
             language=Language.ENGLISH,
@@ -81,7 +85,6 @@ def get_mock_data() -> tuple[list[Source], list[Article], list[AggregatedStory]]
             source_id=arabic_source_id,
             title="تطورات التكنولوجيا",
             content="آخر التطورات في مجال الذكاء الاصطناعي...",
-            summary="تقدم كبير في مجال الذكاء الاصطناعي",
             url="https://arabnews.com/tech",
             publish_date=datetime(2024, 3, 15, 13, 30, tzinfo=UTC),
             language=Language.ARABIC,
@@ -91,7 +94,6 @@ def get_mock_data() -> tuple[list[Source], list[Article], list[AggregatedStory]]
             source_id=arabic_source_id,
             title="مستقبل التقنية",
             content="توقعات مستقبل التكنولوجيا...",
-            summary="نظرة على مستقبل التقنية",
             url="https://arabnews.com/future",
             publish_date=datetime(2024, 3, 15, 14, 0, tzinfo=UTC),
             language=Language.ARABIC,
@@ -101,7 +103,6 @@ def get_mock_data() -> tuple[list[Source], list[Article], list[AggregatedStory]]
             source_id=extra_arabic_source_id,
             title="تقرير خاص عن الذكاء الاصطناعي",
             content="وجهة نظر جديدة حول الذكاء الاصطناعي",
-            summary="وجهة نظر جديدة",
             url="https://alyaum.com/ai",
             publish_date=datetime(2024, 3, 15, 14, 30, tzinfo=UTC),
             language=Language.ARABIC,
@@ -111,7 +112,6 @@ def get_mock_data() -> tuple[list[Source], list[Article], list[AggregatedStory]]
             source_id=new_source_id_1,
             title="Quantum Computing Breakthrough",
             content="Scientists achieved a new milestone in quantum computing...",
-            summary="Quantum computing steps forward",
             url="https://techreview.com/quantum",
             publish_date=datetime(2024, 3, 15, 15, 0, tzinfo=UTC),
             language=Language.ENGLISH,
@@ -121,7 +121,6 @@ def get_mock_data() -> tuple[list[Source], list[Article], list[AggregatedStory]]
             source_id=new_source_id_2,
             title="أخبار اقتصادية",
             content="تقرير عن الاقتصاد في الشرق الأوسط...",
-            summary="تحليل اقتصادي جديد",
             url="https://metimes.com/economy",
             publish_date=datetime(2024, 3, 15, 15, 30, tzinfo=UTC),
             language=Language.ARABIC,
@@ -131,7 +130,6 @@ def get_mock_data() -> tuple[list[Source], list[Article], list[AggregatedStory]]
             source_id=new_source_id_3,
             title="Climate Change Update",
             content="A new UN report highlights climate progress and challenges...",
-            summary="UN releases climate report",
             url="https://worldwatch.com/climate",
             publish_date=datetime(2024, 3, 15, 16, 0, tzinfo=UTC),
             language=Language.ENGLISH,
@@ -145,7 +143,13 @@ def get_mock_data() -> tuple[list[Source], list[Article], list[AggregatedStory]]
             summary="Latest developments and predictions in technology and AI",
             language=Language.ENGLISH,
             publish_date=datetime(2024, 3, 15, 12, 30, tzinfo=UTC),
-            article_ids=[article_1_id, article_2_id, extra_article_en_id, new_article_1_id, new_article_3_id],
+            article_ids=[
+                article_1_id,
+                article_2_id,
+                extra_article_en_id,
+                new_article_1_id,
+                new_article_3_id,
+            ],
         ),
         AggregatedStory(
             id=UUID("d834d941-4fd2-4819-a3b7-7cc8971ab25e"),
@@ -153,7 +157,12 @@ def get_mock_data() -> tuple[list[Source], list[Article], list[AggregatedStory]]
             summary="آخر التطورات والتوقعات في مجال التكنولوجيا والذكاء الاصطناعي",
             language=Language.ARABIC,
             publish_date=datetime(2024, 3, 15, 13, 30, tzinfo=UTC),
-            article_ids=[arabic_article_1_id, arabic_article_2_id, extra_article_ar_id, new_article_2_id],
+            article_ids=[
+                arabic_article_1_id,
+                arabic_article_2_id,
+                extra_article_ar_id,
+                new_article_2_id,
+            ],
         ),
     ]
 

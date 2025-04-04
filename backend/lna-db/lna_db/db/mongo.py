@@ -1,17 +1,22 @@
-import os
+from typing import TYPE_CHECKING
+
 from beanie import init_beanie
-from motor.motor_asyncio import AsyncIOMotorDatabase
-from lna_db.models.news import AggregatedStory, Article, Source, User,UserPreferences
+
 from lna_db.db.db import initialize  # Import your initialize function
+from lna_db.models.news import AggregatedStory, Article, Source, User, UserPreferences
+
+if TYPE_CHECKING:
+    from motor.motor_asyncio import AsyncIOMotorDatabase
 
 DATABASE_NAME: str = "my_db"
+
 
 async def init_database() -> None:
     """Initialize Beanie with all models using the real database."""
     async_client = initialize()  # Get the ASYNC MongoDB client
     db: AsyncIOMotorDatabase = async_client[DATABASE_NAME]
 
-    models = [User, Source, Article, AggregatedStory,UserPreferences]
+    models = [User, Source, Article, AggregatedStory, UserPreferences]
 
     await init_beanie(
         database=db,

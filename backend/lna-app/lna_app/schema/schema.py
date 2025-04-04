@@ -1,6 +1,7 @@
 from datetime import datetime
-from uuid import uuid4
 from typing import Annotated
+from uuid import uuid4
+
 from beanie import Indexed
 from lna_db.core.types import Language, UUIDstr
 from pydantic import BaseModel, EmailStr, Field
@@ -35,7 +36,9 @@ class User(BaseModel):
     """
 
     id: UUIDstr = Field(
-        default_factory=uuid4,alias='_id', description="Unique identifier for the user (UUID)."
+        default_factory=uuid4,
+        alias="_id",
+        description="Unique identifier for the user (UUID).",
     )
     uuid: UUIDstr = Field(
         default_factory=uuid4, description="Unique identifier for the article (UUID)."
@@ -59,7 +62,9 @@ class Source(BaseModel):
     """
 
     id: UUIDstr = Field(
-        default_factory=uuid4,alias='_id', description="Unique identifier for the source (UUID)."
+        default_factory=uuid4,
+        alias="_id",
+        description="Unique identifier for the source (UUID).",
     )
     uuid: UUIDstr = Field(
         default_factory=uuid4, description="Unique identifier for the article (UUID)."
@@ -87,7 +92,9 @@ class Article(BaseModel):
     """
 
     id: UUIDstr = Field(
-        default_factory=uuid4,alias='_id', description="Unique identifier for the article (UUID)."
+        default_factory=uuid4,
+        alias="_id",
+        description="Unique identifier for the article (UUID).",
     )
     uuid: UUIDstr = Field(
         default_factory=uuid4, description="Unique identifier for the article (UUID)."
@@ -123,7 +130,7 @@ class AggregatedStory(BaseModel):
 
     id: UUIDstr = Field(
         default_factory=uuid4,
-        alias='_id',
+        alias="_id",
         description="Unique identifier for the aggregated story (UUID).",
     )
     uuid: UUIDstr = Field(
@@ -151,10 +158,12 @@ class AggregatedStoryListResponse(BaseModel):
         ..., description="List of aggregated stories."
     )
 
+
 class UserListResponse(BaseModel):
     """
     Represents a list of users.
     """
+
     users: list[User] = Field(..., description="List of users.")
 
 
@@ -162,6 +171,7 @@ class SourceListResponse(BaseModel):
     """
     Represents a list of sources.
     """
+
     sources: list[Source] = Field(..., description="List of news sources.")
 
 
@@ -169,6 +179,7 @@ class ArticleListResponse(BaseModel):
     """
     Represents a list of articles.
     """
+
     articles: list[Article] = Field(..., description="List of articles.")
 
 
@@ -178,9 +189,11 @@ class UserCreate(BaseModel):
     full_name: str
     preferences: dict = {}  # Optional preferences
 
+
 class SourceCreate(BaseModel):
     name: str
     url: str
+
 
 class ArticleCreate(BaseModel):
     source_id: UUIDstr
@@ -189,6 +202,7 @@ class ArticleCreate(BaseModel):
     title: str
     content: str
     language: str
+
 
 class AggregatedStoryCreate(BaseModel):
     title: str

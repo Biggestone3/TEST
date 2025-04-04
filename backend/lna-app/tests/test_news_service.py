@@ -5,7 +5,6 @@ from lna_app.services.news_service import get_stories_paginated
 from lna_db.core.types import Language
 from lna_db.db.mock_db import init_mock_db
 from lna_db.models.news import AggregatedStory
-from lna_db.db.mongo import init_database
 
 
 class TestNewsService(unittest.IsolatedAsyncioTestCase):

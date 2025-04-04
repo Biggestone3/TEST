@@ -46,6 +46,9 @@ This monorepo uses Poetry for dependency management. Each package has its own de
 poetry run ruff check .
 poetry run ruff format .
 
+# RUn pyre check
+poetry run pyre check
+
 # Run type checking with pyright
 poetry run pyright
 

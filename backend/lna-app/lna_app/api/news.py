@@ -1,3 +1,5 @@
+from typing import Any
+
 from fastapi import APIRouter, FastAPI
 
 from lna_app.schema.schema import (
@@ -17,6 +19,7 @@ from lna_app.services.news_service import (
     create_user,
     get_articles_paginated,
     get_sources_paginated,
+    get_stories_enriched,
     get_stories_paginated,
     get_users_paginated,
 )
@@ -75,6 +78,12 @@ async def create_article_endpoint(article_data: ArticleCreate) -> None:
 async def create_story_endpoint(story_data: AggregatedStoryCreate) -> None:
     """Create a new aggregated story."""
     await create_aggregated_story(story_data)
+
+
+@router.get("/stories_testing")
+async def get_stories_en() -> list[dict[str, Any]]:
+    """Fetch stories enriched with article source names and url of each source."""
+    return await get_stories_enriched()
 
 
 app.include_router(router)

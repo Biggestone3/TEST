@@ -1,4 +1,5 @@
-from bson import ObjectId
+from typing import Any
+
 from lna_db.core.types import Language
 from lna_db.models.news import (
     AggregatedStory as DbAggregatedStory,
@@ -53,7 +54,8 @@ async def get_articles_paginated(skip: int = 0, limit: int = 10) -> list[Article
 async def create_user(user_data: UserCreate) -> None:
     preference = UserPreferences(**user_data.preferences)
     db_user = DbUser(
-        _id=ObjectId(),
+        # id=ObjectId(),
+        uuid=user_data.uuid,
         email=user_data.email,
         username=user_data.username,
         full_name=user_data.full_name,
@@ -63,7 +65,12 @@ async def create_user(user_data: UserCreate) -> None:
 
 
 async def create_source(source_data: SourceCreate) -> None:
-    db_source = DbSource(_id=ObjectId(), url=source_data.url, name=source_data.name)
+    db_source = DbSource(
+        # id=ObjectId(),
+        uuid=source_data.uuid,
+        url=source_data.url,
+        name=source_data.name,
+    )
     await db_source.insert()
 
 
@@ -72,7 +79,8 @@ async def create_article(article_data: ArticleCreate) -> None:
         # Convert the language field to the Language enum type
         language = Language(article_data.language)
         article = DbArticle(
-            _id=ObjectId(),
+            # id=ObjectId(),
+            uuid=article_data.uuid,
             source_id=article_data.source_id,
             url=article_data.url,
             publish_date=article_data.publish_date,
@@ -89,20 +97,22 @@ async def create_article(article_data: ArticleCreate) -> None:
 
 
 async def create_aggregated_story(story_data: AggregatedStoryCreate) -> None:
+    language = Language(story_data.language)
     db_story = DbAggregatedStory(
-        _id=ObjectId(),
+        # id=ObjectId(),
+        uuid=story_data.uuid,
         title=story_data.title,
         summary=story_data.summary,
-        language=story_data.language,
+        language=language,
         publish_date=story_data.publish_date,
         article_ids=story_data.article_ids,
     )
     await db_story.insert()
 
 
-async def get_stories_enriched():
+async def get_stories_enriched() -> list[dict[str, Any]]:
     db_stories = await DbAggregatedStory.find_all().to_list()
-    enriched_stories = []
+    enriched_stories: list[dict[str, Any]] = []
 
     for story in db_stories:
         # Convert to UUIDs just in case they're strings
@@ -139,4 +149,4 @@ async def get_stories_enriched():
             }
         )
 
-    return {"enriched_stories": enriched_stories}
+    return enriched_stories

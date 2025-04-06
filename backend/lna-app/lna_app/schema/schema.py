@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Annotated
+from typing import Annotated, Any
 from uuid import uuid4
 
 from beanie import Indexed
@@ -184,18 +184,27 @@ class ArticleListResponse(BaseModel):
 
 
 class UserCreate(BaseModel):
+    uuid: UUIDstr = Field(
+        default_factory=uuid4, description="Unique identifier for the user (UUID)."
+    )
     email: EmailStr
     username: str
     full_name: str
-    preferences: dict = {}  # Optional preferences
+    preferences: dict[str, Any] = {}
 
 
 class SourceCreate(BaseModel):
+    uuid: UUIDstr = Field(
+        default_factory=uuid4, description="Unique identifier for the user (UUID)."
+    )
     name: str
     url: str
 
 
 class ArticleCreate(BaseModel):
+    uuid: UUIDstr = Field(
+        default_factory=uuid4, description="Unique identifier for the user (UUID)."
+    )
     source_id: UUIDstr
     url: str
     publish_date: datetime
@@ -205,6 +214,9 @@ class ArticleCreate(BaseModel):
 
 
 class AggregatedStoryCreate(BaseModel):
+    uuid: UUIDstr = Field(
+        default_factory=uuid4, description="Unique identifier for the user (UUID)."
+    )
     title: str
     summary: str
     language: str

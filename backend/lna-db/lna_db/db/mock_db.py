@@ -37,24 +37,29 @@ new_article_3_id = UUID("e824d849-5ad3-4e42-a29c-50049c6f4b38")
 def get_mock_data() -> tuple[list[Source], list[Article], list[AggregatedStory]]:
     """Get the mock data for testing."""
     mock_sources = [
-        Source(id=source_id, name="Global News Network", url="https://news.com"),
+        Source(uuid=source_id, name="Global News Network", url="https://news.com"),
         Source(
-            id=arabic_source_id,
+            uuid=arabic_source_id,
             name="الشبكة الإخبارية العربية",
             url="https://arabnews.com",
         ),
         Source(
-            id=extra_source_id, name="Daily Bulletin", url="https://dailybulletin.com"
+            uuid=extra_source_id, name="Daily Bulletin", url="https://dailybulletin.com"
         ),
-        Source(id=extra_arabic_source_id, name="صحيفة اليوم", url="https://alyaum.com"),
-        Source(id=new_source_id_1, name="Tech Review", url="https://techreview.com"),
-        Source(id=new_source_id_2, name="Middle East Times", url="https://metimes.com"),
-        Source(id=new_source_id_3, name="World Watch", url="https://worldwatch.com"),
+        Source(
+            uuid=extra_arabic_source_id, name="صحيفة اليوم", url="https://alyaum.com"
+        ),
+        Source(uuid=new_source_id_1, name="Tech Review", url="https://techreview.com"),
+        Source(
+            uuid=new_source_id_2, name="Middle East Times", url="https://metimes.com"
+        ),
+        Source(uuid=new_source_id_3, name="World Watch", url="https://worldwatch.com"),
     ]
 
     mock_articles = [
         Article(
-            id=article_1_id,
+            # id=ObjectId(),
+            uuid=article_1_id,
             source_id=source_id,
             title="Breaking News",
             content="Something big happened! Here's the full story...",
@@ -63,7 +68,8 @@ def get_mock_data() -> tuple[list[Source], list[Article], list[AggregatedStory]]
             language=Language.ENGLISH,
         ),
         Article(
-            id=article_2_id,
+            # id=ObjectId(),
+            uuid=article_2_id,
             source_id=source_id,
             title="Technology Update",
             content="New advancements in AI and technology...",
@@ -72,7 +78,8 @@ def get_mock_data() -> tuple[list[Source], list[Article], list[AggregatedStory]]
             language=Language.ENGLISH,
         ),
         Article(
-            id=extra_article_en_id,
+            # id=ObjectId(),
+            uuid=extra_article_en_id,
             source_id=extra_source_id,
             title="More AI News",
             content="Another perspective on AI",
@@ -81,7 +88,8 @@ def get_mock_data() -> tuple[list[Source], list[Article], list[AggregatedStory]]
             language=Language.ENGLISH,
         ),
         Article(
-            id=arabic_article_1_id,
+            # id=ObjectId(),
+            uuid=arabic_article_1_id,
             source_id=arabic_source_id,
             title="تطورات التكنولوجيا",
             content="آخر التطورات في مجال الذكاء الاصطناعي...",
@@ -90,7 +98,8 @@ def get_mock_data() -> tuple[list[Source], list[Article], list[AggregatedStory]]
             language=Language.ARABIC,
         ),
         Article(
-            id=arabic_article_2_id,
+            # id=ObjectId(),
+            uuid=arabic_article_2_id,
             source_id=arabic_source_id,
             title="مستقبل التقنية",
             content="توقعات مستقبل التكنولوجيا...",
@@ -99,7 +108,8 @@ def get_mock_data() -> tuple[list[Source], list[Article], list[AggregatedStory]]
             language=Language.ARABIC,
         ),
         Article(
-            id=extra_article_ar_id,
+            # id=ObjectId(),
+            uuid=extra_article_ar_id,
             source_id=extra_arabic_source_id,
             title="تقرير خاص عن الذكاء الاصطناعي",
             content="وجهة نظر جديدة حول الذكاء الاصطناعي",
@@ -108,7 +118,8 @@ def get_mock_data() -> tuple[list[Source], list[Article], list[AggregatedStory]]
             language=Language.ARABIC,
         ),
         Article(
-            id=new_article_1_id,
+            # id=ObjectId(),
+            uuid=new_article_1_id,
             source_id=new_source_id_1,
             title="Quantum Computing Breakthrough",
             content="Scientists achieved a new milestone in quantum computing...",
@@ -117,7 +128,8 @@ def get_mock_data() -> tuple[list[Source], list[Article], list[AggregatedStory]]
             language=Language.ENGLISH,
         ),
         Article(
-            id=new_article_2_id,
+            # id=ObjectId(),
+            uuid=new_article_2_id,
             source_id=new_source_id_2,
             title="أخبار اقتصادية",
             content="تقرير عن الاقتصاد في الشرق الأوسط...",
@@ -126,7 +138,8 @@ def get_mock_data() -> tuple[list[Source], list[Article], list[AggregatedStory]]
             language=Language.ARABIC,
         ),
         Article(
-            id=new_article_3_id,
+            # id=ObjectId(),
+            uuid=new_article_3_id,
             source_id=new_source_id_3,
             title="Climate Change Update",
             content="A new UN report highlights climate progress and challenges...",
@@ -138,7 +151,8 @@ def get_mock_data() -> tuple[list[Source], list[Article], list[AggregatedStory]]
 
     mock_stories = [
         AggregatedStory(
-            id=UUID("c734d941-4fd2-4819-a3b7-7cc8971ab25e"),
+            # id=ObjectId(),
+            uuid=UUID("c734d941-4fd2-4819-a3b7-7cc8971ab25e"),
             title="Technology and AI Developments",
             summary="Latest developments and predictions in technology and AI",
             language=Language.ENGLISH,
@@ -152,7 +166,8 @@ def get_mock_data() -> tuple[list[Source], list[Article], list[AggregatedStory]]
             ],
         ),
         AggregatedStory(
-            id=UUID("d834d941-4fd2-4819-a3b7-7cc8971ab25e"),
+            # id=ObjectId(),
+            uuid=UUID("d834d941-4fd2-4819-a3b7-7cc8971ab25e"),
             title="مستقبل التكنولوجيا والذكاء الاصطناعي",
             summary="آخر التطورات والتوقعات في مجال التكنولوجيا والذكاء الاصطناعي",
             language=Language.ARABIC,

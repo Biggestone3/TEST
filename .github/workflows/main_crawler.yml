@@ -1,83 +1,48 @@
-# Docs for the Azure Web Apps Deploy action: https://github.com/azure/functions-action
-# More GitHub Actions for Azure: https://github.com/Azure/actions
-# More info on Python, GitHub Actions, and Azure Functions: https://aka.ms/python-webapps-actions
-
-name: Build and deploy Python project to Azure Function App - CRAWLER
+name: Merge crawler code into Azure Function init
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
   workflow_dispatch:
 
 env:
-  AZURE_FUNCTIONAPP_PACKAGE_PATH: '.' # set this to the path to your web app project, defaults to the repository root
-  PYTHON_VERSION: '3.11' # set this to the python version to use (supports 3.6, 3.7, 3.8)
+  PYTHON_VERSION: '3.11' 
 
 jobs:
   build:
     runs-on: ubuntu-latest
     permissions:
-      contents: read #This is required for actions/checkout
+      contents: write  # Needed to commit changes
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup Python version
+      - name: Setup Python
         uses: actions/setup-python@v5
         with:
           python-version: ${{ env.PYTHON_VERSION }}
 
-      - name: Create and start virtual environment
+      - name: Merge crawler code into function init
         run: |
-          python -m venv venv
-          source venv/bin/activate
+          mkdir -p backend/function_app/TimerTrigger1
+          echo -e "# === TYPES ===" > backend/function_app/TimerTrigger1/__init__.py
+          cat backend/lna-db/lna_db/core/types.py >> backend/function_app/TimerTrigger1/__init__.py
 
-      - name: Install dependencies
-        run: pip install -r requirements.txt
+          echo -e "\n\n# === MODELS ===" >> backend/function_app/TimerTrigger1/__init__.py
+          cat backend/lna-db/lna_db/models/news.py >> backend/function_app/TimerTrigger1/__init__.py
 
-      # Optional: Add step to run tests here
+          echo -e "\n\n# === CRAWLER LOGIC ===" >> backend/function_app/TimerTrigger1/__init__.py
+          cat backend/lna-crawlers/lna_crawlers/*.py >> backend/function_app/TimerTrigger1/__init__.py
 
-      - name: Zip artifact for deployment
-        run: zip release.zip ./* -r
+      - name: Remove lna_db imports from merged file
+        run: |
+          sed -i '/^from lna_db/d' backend/function_app/TimerTrigger1/__init__.py
 
-      - name: Upload artifact for deployment job
-        uses: actions/upload-artifact@v4
-        with:
-          name: python-app
-          path: |
-            release.zip
-            !venv/
-
-  deploy:
-    runs-on: ubuntu-latest
-    needs: build
-    permissions:
-      id-token: write #This is required for requesting the JWT
-      contents: read #This is required for actions/checkout
-
-    steps:
-      - name: Download artifact from build job
-        uses: actions/download-artifact@v4
-        with:
-          name: python-app
-
-      - name: Unzip artifact for deployment
-        run: unzip release.zip     
-        
-      - name: Login to Azure
-        uses: azure/login@v2
-        with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_09EFE30F6D3549239BF076977627CBB4 }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_77AA89C4088C40C9ADF0766215036CF9 }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_70C1709816AE452DAE2C07B9B5BEA2C5 }}
-
-      - name: 'Deploy to Azure Functions'
-        uses: Azure/functions-action@v1
-        id: deploy-to-function
-        with:
-          app-name: 'CRAWLER'
-          slot-name: 'Production'
-          package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
-          
+      - name: Commit merged __init__.py to repo
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions@github.com"
+          git add backend/function_app/TimerTrigger1/__init__.py
+          git commit -m "Update __init__.py with merged crawler code" || echo "No changes to commit"
+          git push

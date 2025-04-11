@@ -2,7 +2,9 @@ from typing import TYPE_CHECKING
 
 from beanie import init_beanie
 
-from lna_db.db.db import initialize  # Import your initialize function
+from lna_db.db.db import (
+    initialize,  # Import your initialize function  # Import your initialize function
+)
 from lna_db.models.news import AggregatedStory, Article, Source, User, UserPreferences
 
 if TYPE_CHECKING:

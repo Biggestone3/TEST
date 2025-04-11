@@ -4,6 +4,7 @@
         "lna-db",
         "lna-crawlers"
     ],
+    "extraPaths": ["./lna-db"],
     "exclude": [
         "**/node_modules",
         "**/__pycache__",

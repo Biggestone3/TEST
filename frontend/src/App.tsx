@@ -1,30 +1,37 @@
-
 import { useState } from 'react';
+import { BrowserRouter as Router, Route, Routes} from 'react-router-dom';
+import { Box } from '@mui/material';
+import { GoogleOAuthProvider } from '@react-oauth/google';
 import SearchAppBar from './components/Appbar';
 import NewsStack from './components/NewsStack';
-import { Box } from '@mui/material';
+import LoginError from './components/LoginError';
+import AuthCallback from './components/AuthCallback';
+
 
 export default function App() {
   const [language, setLanguage] = useState<'en' | 'ar'>('en');
 
   return (
-    <Box sx={{
-      minHeight: '100vh',
-      display: 'flex',
-      flexDirection: 'column',
-      direction: language === 'ar' ? 'rtl' : 'ltr'
-    }}>
-      <SearchAppBar language={language} setLanguage={setLanguage} />
-
-
-      <Box component="main" sx={{
-        flexGrow: 1,
-        marginTop: '64px',
-        padding: 3
-      }}>
-        <NewsStack language={language} />
-      </Box>
-    </Box>
+    <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
+      <Router>
+        <Box sx={{
+          paddingTop: '64px',
+          minHeight: '100vh',
+          display: 'flex',
+          flexDirection: 'column'
+        }}>
+          <SearchAppBar language={language} setLanguage={setLanguage} />
+          <Routes>
+            <Route path="/" element={
+              <Box component="main" sx={{ p: 3 }}>
+                <NewsStack language={language} />
+              </Box>
+            } />
+            <Route path="/login-error" element={<LoginError />} />
+            <Route path="/auth/callback" element={<AuthCallback />} />
+          </Routes>
+        </Box>
+      </Router>
+    </GoogleOAuthProvider>
   );
 }
-

@@ -1,0 +1,7 @@
+{
+    "python.analysis.extraPaths": [
+        "./backend/lna-db",
+        "./backend/lna-app/lna_app",
+        "./backend/lna-db/lna_db/db"
+    ]
+}

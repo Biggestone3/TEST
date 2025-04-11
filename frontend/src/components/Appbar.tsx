@@ -10,7 +10,10 @@ import SearchIcon from '@mui/icons-material/Search';
 import LanguageIcon from '@mui/icons-material/Language';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
-
+import Button from '@mui/material/Button';
+import GoogleIcon from '@mui/icons-material/Google';
+import { useGoogleLogin } from '@react-oauth/google';
+import { useNavigate } from 'react-router-dom';
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
   borderRadius: theme.shape.borderRadius,
@@ -23,7 +26,6 @@ const Search = styled('div')(({ theme }) => ({
     width: 'auto',
   },
 }));
-
 const SearchIconWrapper = styled('div')(({ theme }) => ({
   padding: theme.spacing(0, 2),
   height: '100%',
@@ -51,15 +53,68 @@ interface SearchAppBarProps {
 export default function SearchAppBar({ language, setLanguage }: SearchAppBarProps) {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const isRTL = language === 'ar';
+  const navigate = useNavigate();
+
+
+const handleGoogleLogin = useGoogleLogin({
+  flow: 'auth-code',
+  onSuccess: async (codeResponse) => {
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/auth/auth/google/callback`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ code: codeResponse.code }),
+        }
+      );
+
+      // Handle non-JSON responses
+      const responseText = await response.text();
+
+      if (!response.ok) {
+        throw new Error(responseText || 'Authentication failed');
+      }
+
+      let data;
+      try {
+        // Try parsing the response as JSON
+        data = JSON.parse(responseText);
+      } catch (err) {
+        // If parsing fails, log and handle it appropriately
+        console.error('Failed to parse response as JSON:', err);
+        throw new Error('Invalid server response format');
+      }
+
+      localStorage.setItem('authToken', data.access_token);
+      navigate('/');
+      
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Login failed';
+      console.error('Login error:', message);
+      navigate(`/login-error?message=${encodeURIComponent(message)}`);
+    }
+  },
+  onError: (error) => {
+    console.error('Google auth error:', error.error_description);
+    navigate(`/login-error?message=${encodeURIComponent(error.error_description || 'Google login failed')}`);
+  }
+});
+const handleLogout = () => {
+  localStorage.removeItem('authToken');
+ 
+  navigate('/');
+};
+
 
   return (
-    <AppBar position="fixed" sx={{ 
-      width: '100%', 
+    <AppBar position="fixed" sx={{
+      width: '100%',
       backgroundColor: '#ffffff',
       direction: isRTL ? 'rtl' : 'ltr'
     }}>
       <Toolbar sx={{ justifyContent: 'space-between' }}>
-        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
           <IconButton
             edge="start"
             color="inherit"
@@ -69,6 +124,15 @@ export default function SearchAppBar({ language, setLanguage }: SearchAppBarProp
           >
             <LanguageIcon />
           </IconButton>
+          {!localStorage.getItem('authToken') ? (
+            <Button variant="outlined" startIcon={<GoogleIcon />} sx={{ color: '#4285F4', borderColor: '#4285F4', '&:hover': { borderColor: '#357ABD' }}} onClick={() => handleGoogleLogin()}>
+              {isRTL ? 'تسجيل الدخول' : 'Login'}
+            </Button>
+          ) : (
+            <Button variant="outlined" sx={{ color: 'black', borderColor: 'black' }} onClick={handleLogout}>
+              {isRTL ? 'تسجيل الخروج' : 'Logout'}
+            </Button>
+          )}
 
           <Menu
             anchorEl={anchorEl}
@@ -83,7 +147,7 @@ export default function SearchAppBar({ language, setLanguage }: SearchAppBarProp
         <Typography
           variant="h6"
           component="div"
-          sx={{ 
+          sx={{
             position: 'absolute',
             left: '50%',
             transform: 'translateX(-50%)',
@@ -93,20 +157,20 @@ export default function SearchAppBar({ language, setLanguage }: SearchAppBarProp
           {isRTL ? 'الأخبار' : 'NEWS'}
         </Typography>
 
-        <Search sx={{ 
-          width: isRTL ? 100 : 100, 
-          marginLeft: isRTL ? 1: 0,
+        <Search sx={{
+          width: isRTL ? 100 : 100,
+          marginLeft: isRTL ? 1 : 0,
           marginRight: isRTL ? 0 : 1
         }}>
-          <SearchIconWrapper sx={{ 
-            [isRTL ? 'right' : 'left']: 0 
+          <SearchIconWrapper sx={{
+            [isRTL ? 'right' : 'left']: 0
           }}>
             <SearchIcon sx={{ color: 'text.secondary' }} />
           </SearchIconWrapper>
           <StyledInputBase
             placeholder={isRTL ? 'بحث...' : 'Search...'}
             inputProps={{ 'aria-label': 'search' }}
-            sx={{ 
+            sx={{
               '& .MuiInputBase-input': {
                 [isRTL ? 'paddingRight' : 'paddingLeft']: `calc(1em + ${48}px)`,
               }

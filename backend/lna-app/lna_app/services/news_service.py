@@ -55,6 +55,7 @@ async def create_user(user_data: UserCreate) -> None:
     preference = UserPreferences(**user_data.preferences)
     db_user = DbUser(
         # id=ObjectId(),
+        google_id=user_data.google_id,
         uuid=user_data.uuid,
         email=user_data.email,
         username=user_data.username,

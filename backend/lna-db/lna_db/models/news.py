@@ -44,6 +44,8 @@ class User(TimeStampedModel):
 
     # id: ObjectId = Field(alias="_id")
     uuid: UUID = Field(default_factory=uuid4)
+
+    google_id: Annotated[str, Indexed(unique=True)] = Field(...)
     email: Annotated[EmailStr, Indexed(unique=True)] = Field(
         ..., description="Email address of the user"
     )

@@ -184,6 +184,7 @@ class ArticleListResponse(BaseModel):
 
 
 class UserCreate(BaseModel):
+    google_id: str
     uuid: UUIDstr = Field(
         default_factory=uuid4, description="Unique identifier for the user (UUID)."
     )

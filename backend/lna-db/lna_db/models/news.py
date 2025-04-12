@@ -74,7 +74,14 @@ class Source(TimeStampedModel):
 
     class Settings:
         name = "sources"
-
+    content_html_key: tuple[str, str] = Field(
+        default=("", ""), description="The place to get info from the actual webpage."
+    )
+    has_rss: bool = Field(
+        default=True,
+        description="Boolean value that determines whether "
+        "a webpage has an RSS value or not.",
+    )
 
 class Article(TimeStampedModel):
     """Article model representing a news article."""

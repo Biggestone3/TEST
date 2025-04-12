@@ -64,7 +64,7 @@ async def process_feed_entry(entry, source_articles: list[Article], src: Source)
         id = uuid.uuid4()
         myArticle = Article(
             uuid=id,
-            source_id=src.id,
+            source_id=src.uuid,
             content="No content to be displayed.",
             title=entry.title,
             url=entry.link,
@@ -126,7 +126,7 @@ async def fetch_articles(
             myArticle = Article(
                 uuid=id,
                 url=url,
-                source_id=src.id,
+                source_id=src.uuid,
                 content="No content to be displayed.",
                 title=article["name"],
                 publish_date=dt,

@@ -48,7 +48,7 @@ jobs:
           cat backend/lna-db/lna_db/models/news.py >> ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/function_app.py
 
           echo -e "\n\n# === CRAWLER LOGIC ===" >> ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/function_app.py
-          cat backend/lna-crawlers/lna_crawlers/Crawler.py >> ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/function_app.py
+          cat backend/lna-crawlers/lna_crawlers/crawler.py >> ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/function_app.py
 
           sed -i '/^from lna_db/d' ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/function_app.py
 

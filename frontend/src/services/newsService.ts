@@ -1,7 +1,6 @@
 import defaultImage from '../assets/image.png';
 import { News } from '../components/News';
-const DOMAIN = import.meta.env.VITE_DOMAIN;
-
+const DOMAIN = import.meta.env.VITE_API_URL;
 
 interface Source {
   name: string;
@@ -35,9 +34,9 @@ export const fetchNews = async (): Promise<News[]> => {
     return data.stories.map((story: Story) => {
       const sources: Source[] = Array.isArray(story.articles)
         ? story.articles.map((article) => ({
-            name: article.source_name,
-            url: article.source_url
-          }))
+          name: article.source_name,
+          url: article.source_url
+        }))
         : [];
 
       const uniqueSources: Source[] = Array.from(

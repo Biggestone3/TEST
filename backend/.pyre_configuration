@@ -37,6 +37,30 @@
     },
     {
       "site-package": "dotenv"
+    },
+    {
+      "site-package": "httpx"
+    },
+    {
+      "site-package": "jose"
+    },
+    {
+      "site-package": "google"
+    },
+    {
+      "site-package": "pydantic_settings"
+    },
+    {
+      "site-package": "azure"
+    },
+    {
+      "site-package": "feedparser"
+    },
+    {
+      "site-package": "bs4"
+    },
+    {
+      "site-package": "langdetect"
     }
   ],
   "exclude": [
@@ -45,5 +69,5 @@
     "migrations/"
   ],
   "strict": true,
-  "python_version": "3.13"
+  "python_version": "3.11"
 }

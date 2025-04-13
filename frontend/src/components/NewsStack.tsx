@@ -8,22 +8,22 @@ interface NewsStackProps {
 }
 
 export default function NewsStack({ language }: NewsStackProps) {
-    const [news, setNews] = useState<any[]>([]);
-    const [loading, setLoading] = useState<boolean>(true);
+  const [news, setNews] = useState<any[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
 
-    useEffect(() => {
-        async function loadNews() {
-            setLoading(true);
-            const newsData = await fetchNews();
-            if (newsData) setNews(newsData);
-            setLoading(false);
-        }
+  useEffect(() => {
+    async function loadNews() {
+      setLoading(true);
+      const newsData = await fetchNews();
+      if (newsData) setNews(newsData);
+      setLoading(false);
+    }
 
-        loadNews();
-    }, []);
+    loadNews();
+  }, []);
 
-    if (loading) return <p>Loading news...</p>;
-    if (!news.length) return <p>No news available</p>;
+  if (loading) return <p>Loading news...</p>;
+  if (!news.length) return <p>No news available</p>;
 
   return (
     <Box sx={{
@@ -31,13 +31,13 @@ export default function NewsStack({ language }: NewsStackProps) {
       flexDirection: 'column',
       alignItems: 'center',
       justifyContent: 'center',
-      width: '90vw', 
+      width: '90vw',
       maxWidth: '100%',
       padding: 3,
-      direction: language === 'ar' ? 'rtl' : 'ltr' ,
+      direction: language === 'ar' ? 'rtl' : 'ltr',
     }}>
       {news.map((newsItem, index) => (
-        <Box key={index} sx={{ 
+        <Box key={index} sx={{
           width: '100%',
           maxWidth: 1200,
           mb: 4,

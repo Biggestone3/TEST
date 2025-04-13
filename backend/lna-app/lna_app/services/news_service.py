@@ -54,7 +54,6 @@ async def get_articles_paginated(skip: int = 0, limit: int = 10) -> list[Article
 async def create_user(user_data: UserCreate) -> None:
     preference = UserPreferences(**user_data.preferences)
     db_user = DbUser(
-        # id=ObjectId(),
         google_id=user_data.google_id,
         uuid=user_data.uuid,
         email=user_data.email,
@@ -67,7 +66,6 @@ async def create_user(user_data: UserCreate) -> None:
 
 async def create_source(source_data: SourceCreate) -> None:
     db_source = DbSource(
-        # id=ObjectId(),
         uuid=source_data.uuid,
         url=source_data.url,
         name=source_data.name,
@@ -80,7 +78,6 @@ async def create_article(article_data: ArticleCreate) -> None:
         # Convert the language field to the Language enum type
         language = Language(article_data.language)
         article = DbArticle(
-            # id=ObjectId(),
             uuid=article_data.uuid,
             source_id=article_data.source_id,
             url=article_data.url,
@@ -100,7 +97,6 @@ async def create_article(article_data: ArticleCreate) -> None:
 async def create_aggregated_story(story_data: AggregatedStoryCreate) -> None:
     language = Language(story_data.language)
     db_story = DbAggregatedStory(
-        # id=ObjectId(),
         uuid=story_data.uuid,
         title=story_data.title,
         summary=story_data.summary,

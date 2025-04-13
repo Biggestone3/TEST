@@ -18,12 +18,12 @@ from lna_db.core.types import Language
 from lna_db.models.news import AggregatedStory, Article, Source, User, UserPreferences
 from motor.motor_asyncio import AsyncIOMotorClient
 
-article_Dict = {}
+article_Dict: dict[str, list[Article]] = {}
 
 
 async def fetch_content(
     link: str, myArticle: Article, source_articles: list[Article], src: Source
-):
+) -> None:
     try:
         async with httpx.AsyncClient() as client:
             response = await client.get(link, timeout=10, follow_redirects=True)
@@ -59,26 +59,48 @@ async def fetch_content(
         print(f"Error in fetch_content ({src.name}): {e}")
 
 
-async def process_feed_entry(entry, source_articles: list[Article], src: Source):
+async def process_feed_entry(
+    entry: feedparser.FeedParserDict, source_articles: list[Article], src: Source
+) -> None:
     try:
         id = uuid.uuid4()
+        # Use get() to safely access attributes with default values
+        title = entry.get("title", "Untitled")
+        link = entry.get("link", "")
+
+        # Ensure title and link are strings
+        if not isinstance(title, str):
+            title = str(title) if title else "Untitled"
+        if not isinstance(link, str):
+            link = str(link) if link else ""
+
         myArticle = Article(
             uuid=id,
             source_id=src.uuid,
             content="No content to be displayed.",
-            title=entry.title,
-            url=entry.link,
+            title=title,
+            url=link,
             publish_date=datetime.min,
         )
-        dt = parser.parse(entry.published)
-        myArticle.publish_date = dt
-        await fetch_content(entry.link, myArticle, source_articles, src)
+
+        # Get publish date if available
+        if hasattr(entry, "published"):
+            published = entry.get("published", "")
+            if published and isinstance(published, str):
+                dt = parser.parse(published)
+                myArticle.publish_date = dt
+
+        # Only fetch content if we have a valid URL
+        if link:
+            await fetch_content(link, myArticle, source_articles, src)
+        else:
+            source_articles.append(myArticle)
     except Exception as e:
         print(f"Error in process_feed_entry ({src.name}): {e}")
 
 
-async def get_feed(src: Source, article_count: int):
-    source_articles = []
+async def get_feed(src: Source, article_count: int) -> None:
+    source_articles: list[Article] = []
 
     if not src.has_rss:
         await fetch_articles(source_articles, src, article_count)
@@ -91,11 +113,13 @@ async def get_feed(src: Source, article_count: int):
     ]
 
     await asyncio.gather(*tasks)
-    article_Dict[src.id] = source_articles
-    await add_articles_to_db(src, source_articles)
+    # Use string ID as dictionary key to avoid Optional[PydanticObjectId] issues
+    if src.id is not None:
+        article_Dict[str(src.id)] = source_articles
+        await add_articles_to_db(src, source_articles)
 
 
-async def add_articles_to_db(src: Source, data_array: list[Article]):
+async def add_articles_to_db(src: Source, data_array: list[Article]) -> None:
     for article in data_array:
         try:
             existing_article = await Article.find_one({"url": article.url})
@@ -109,7 +133,7 @@ async def add_articles_to_db(src: Source, data_array: list[Article]):
 
 async def fetch_articles(
     source_articles: list[Article], src: Source, article_count: int
-):
+) -> None:
     try:
         async with httpx.AsyncClient() as client:
             response = await client.get(src.url, timeout=10)
@@ -140,19 +164,21 @@ async def fetch_articles(
             )
 
         await asyncio.gather(*tasks)
-        article_Dict[src.id] = source_articles
-        await add_articles_to_db(src, source_articles)
+        # Use string ID as dictionary key to avoid Optional[PydanticObjectId] issues
+        if src.id is not None:
+            article_Dict[str(src.id)] = source_articles
+            await add_articles_to_db(src, source_articles)
 
     except Exception as e:
         print(f"Error in fetch_articles : {e}")
 
 
-async def auto_get_feed(src: Source, article_count: int):
+async def auto_get_feed(src: Source, article_count: int) -> None:
     while True:
         await get_feed(src, article_count)
 
 
-async def start(user: User, article_count: int, sources: dict):
+async def start(user: User, article_count: int, sources: dict[str, Source]) -> None:
     tasks = []
     for srcid in user.preferences.source_ids:
         source = sources.get(str(srcid))
@@ -162,10 +188,10 @@ async def start(user: User, article_count: int, sources: dict):
     await asyncio.gather(*tasks)
 
 
-async def init_db():
-    #uri of DB set as secret on Azure
+async def init_db() -> None:
+    # uri of DB set as secret on Azure
     uri = os.environ.get("MONGODB_URI")
-    client = AsyncIOMotorClient(uri) # Create an async client for MongoDB Atlas
+    client = AsyncIOMotorClient(uri)  # Create an async client for MongoDB Atlas
     database = client["my_db"]
 
     # Initialize Beanie with the real MongoDB
@@ -173,7 +199,9 @@ async def init_db():
         database=database,
         document_models=[UserPreferences, User, Source, Article, AggregatedStory],
     )
-async def main():
+
+
+async def main() -> None:
     # Initialize Beanie before using models
     await init_db()
     # Simulate a test user and sources
@@ -207,7 +235,7 @@ async def main():
     await asyncio.gather(*tasks)
 
 
-
+# Create a FunctionApp instance with appropriate type annotation
 app = func.FunctionApp()
 
 

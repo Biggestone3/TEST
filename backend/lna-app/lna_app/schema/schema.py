@@ -35,11 +35,6 @@ class User(BaseModel):
         preferences: User preferences, including source subscriptions and language.
     """
 
-    id: UUIDstr = Field(
-        default_factory=uuid4,
-        alias="_id",
-        description="Unique identifier for the user (UUID).",
-    )
     uuid: UUIDstr = Field(
         default_factory=uuid4, description="Unique identifier for the article (UUID)."
     )
@@ -61,11 +56,6 @@ class Source(BaseModel):
         urls: List of URLs associated with the source (e.g., homepage, RSS feed).
     """
 
-    id: UUIDstr = Field(
-        default_factory=uuid4,
-        alias="_id",
-        description="Unique identifier for the source (UUID).",
-    )
     uuid: UUIDstr = Field(
         default_factory=uuid4, description="Unique identifier for the article (UUID)."
     )
@@ -91,11 +81,6 @@ class Article(BaseModel):
         language: Language of the article, defaults to UNKNOWN if undetermined.
     """
 
-    id: UUIDstr = Field(
-        default_factory=uuid4,
-        alias="_id",
-        description="Unique identifier for the article (UUID).",
-    )
     uuid: UUIDstr = Field(
         default_factory=uuid4, description="Unique identifier for the article (UUID)."
     )
@@ -128,11 +113,6 @@ class AggregatedStory(BaseModel):
         article_ids: List of article IDs (UUIDs) that belong to this aggregated story.
     """
 
-    id: UUIDstr = Field(
-        default_factory=uuid4,
-        alias="_id",
-        description="Unique identifier for the aggregated story (UUID).",
-    )
     uuid: UUIDstr = Field(
         default_factory=uuid4, description="Unique identifier for the article (UUID)."
     )

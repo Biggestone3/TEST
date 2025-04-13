@@ -8,7 +8,7 @@ valid_token = "valid_jwt_token"
 invalid_token = "abc"
 
 
-def test_get_current_user_details():
+def test_get_current_user_details() -> None:
     response = client.get(
         "/api/users/me",
         headers={"Authorization": f"Bearer {valid_token}"},
@@ -17,7 +17,7 @@ def test_get_current_user_details():
     assert "id" in response.json()
 
 
-def test_update_user_preferences():
+def test_update_user_preferences() -> None:
     # Valid token test
     response = client.post(
         "/api/users/update-preferences",

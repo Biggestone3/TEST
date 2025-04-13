@@ -1,5 +1,6 @@
 import os
 from datetime import datetime, timedelta
+from typing import Any, Optional
 
 import httpx
 from fastapi import APIRouter, HTTPException, Query
@@ -13,13 +14,13 @@ from lna_db.models.news import User
 router = APIRouter()
 
 # Security configuration
-SECRET_KEY = os.getenv("SECRET_KEY")
+SECRET_KEY: Optional[str] = os.getenv("SECRET_KEY")
 ALGORITHM = "HS256"
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 
 @router.get("/google")
-async def auth_google():
+async def auth_google() -> RedirectResponse:
     return RedirectResponse(
         f"https://accounts.google.com/o/oauth2/v2/auth?"
         f"client_id={os.getenv('GOOGLE_CLIENT_ID')}&"
@@ -31,7 +32,7 @@ async def auth_google():
 
 # auth.py
 @router.post("/google/callback")
-async def google_callback(code: str = Query(...)):
+async def google_callback(code: str = Query(...)) -> dict[str, Any]:
     """Improved with detailed error logging"""
     try:
         # Exchange code for tokens
@@ -98,7 +99,7 @@ async def google_callback(code: str = Query(...)):
 
 
 @router.post("/logout")
-async def logout():
+async def logout() -> JSONResponse:
     """Logout user by invalidating the JWT (handled on the client side)"""
     # You could return a message confirming the logout, but JWT tokens are stateless,
     # so the actual "logout" happens when the token is removed from the client.

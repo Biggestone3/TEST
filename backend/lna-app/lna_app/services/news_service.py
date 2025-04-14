@@ -103,6 +103,8 @@ async def create_aggregated_story(story_data: AggregatedStoryCreate) -> None:
         language=language,
         publish_date=story_data.publish_date,
         article_ids=story_data.article_ids,
+        aggregation_key="",
+        aggregator="manual_create",
     )
     await db_story.insert()
 

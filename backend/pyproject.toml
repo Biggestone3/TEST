@@ -28,10 +28,12 @@ build-backend = "poetry.core.masonry.api"
 target-version = "py38"
 line-length = 100
 select = ["E", "F", "B", "I"]
+include = ["function-app/**/*.py"]
 
 [tool.pyre]
 source_directories = [
     "lna-app/lna_app",
     "lna-db/lna_db",
     "lna-crawlers/lna_crawlers",
+    "function-app",
 ]

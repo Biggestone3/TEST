@@ -1,6 +1,6 @@
 from datetime import UTC, datetime
 from typing import Annotated, Any, Self
-from uuid import UUID, uuid4
+from uuid import uuid4
 
 from beanie import Document, Indexed
 from pydantic import EmailStr, Field
@@ -42,9 +42,7 @@ class UserPreferences(Document):
 class User(TimeStampedModel):
     """User model for the application."""
 
-    # id: ObjectId = Field(alias="_id")
-    uuid: UUID = Field(default_factory=uuid4)
-
+    uuid: UUIDstr = Field(default_factory=uuid4)
     google_id: Annotated[str, Indexed(unique=True)] = Field(...)
     email: Annotated[EmailStr, Indexed(unique=True)] = Field(
         ..., description="Email address of the user"
@@ -65,7 +63,7 @@ class User(TimeStampedModel):
 class Source(TimeStampedModel):
     """News source model."""
 
-    uuid: UUID = Field(default_factory=uuid4)
+    uuid: UUIDstr = Field(default_factory=uuid4)
     name: str = Field(..., description="Display name of the source")
     url: str = Field(..., description="URL associated with this source")
 
@@ -74,6 +72,7 @@ class Source(TimeStampedModel):
 
     class Settings:
         name = "sources"
+
     content_html_key: tuple[str, str] = Field(
         default=("", ""), description="The place to get info from the actual webpage."
     )
@@ -83,11 +82,11 @@ class Source(TimeStampedModel):
         "a webpage has an RSS value or not.",
     )
 
+
 class Article(TimeStampedModel):
     """Article model representing a news article."""
 
-    # id: ObjectId = Field(alias="_id")
-    uuid: UUID = Field(default_factory=uuid4)
+    uuid: UUIDstr = Field(default_factory=uuid4)
     source_id: UUIDstr = Field(
         ..., description="Reference to the Source this article belongs to"
     )
@@ -100,8 +99,6 @@ class Article(TimeStampedModel):
     )
     title: str = Field(..., description="Title of the article")
     content: str = Field(..., description="Content of the article")
-    # category: str = Field(..., description="Category of the article")
-    # summary: str = Field(default="", description="Summary of the article")
     language: Language = Language.UNKNOWN
 
     class Config:
@@ -114,7 +111,7 @@ class Article(TimeStampedModel):
 class AggregatedStory(TimeStampedModel):
     """Model representing a clustered or aggregated news story."""
 
-    uuid: UUID = Field(default_factory=uuid4)
+    uuid: UUIDstr = Field(default_factory=uuid4)
     title: str = Field(..., description="Title of the aggregated story")
     summary: str = Field(..., description="Summary of the aggregated story")
     language: Language = Field(..., description="Language of the aggregated story")
@@ -122,6 +119,14 @@ class AggregatedStory(TimeStampedModel):
         ..., description="Publish date of the aggregated story"
     )
     article_ids: list[UUIDstr] = Field(default_factory=list)
+    aggregator: str = Field(
+        ..., description="The aggregator which lead to this aggregated story"
+    )
+    aggregation_key: str = Field(
+        ...,
+        description="The key of the aggregation, for time based it will be the hour, "
+        "for topic based it will be the topic",
+    )
 
     class Config:
         arbitrary_types_allowed = True

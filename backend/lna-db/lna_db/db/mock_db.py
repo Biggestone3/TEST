@@ -151,7 +151,6 @@ def get_mock_data() -> tuple[list[Source], list[Article], list[AggregatedStory]]
 
     mock_stories = [
         AggregatedStory(
-            # id=ObjectId(),
             uuid=UUID("c734d941-4fd2-4819-a3b7-7cc8971ab25e"),
             title="Technology and AI Developments",
             summary="Latest developments and predictions in technology and AI",
@@ -164,9 +163,12 @@ def get_mock_data() -> tuple[list[Source], list[Article], list[AggregatedStory]]
                 new_article_1_id,
                 new_article_3_id,
             ],
+            aggregation_key="",
+            aggregator="manual_create",
         ),
         AggregatedStory(
-            # id=ObjectId(),
+            aggregation_key="",
+            aggregator="manual_create",
             uuid=UUID("d834d941-4fd2-4819-a3b7-7cc8971ab25e"),
             title="مستقبل التكنولوجيا والذكاء الاصطناعي",
             summary="آخر التطورات والتوقعات في مجال التكنولوجيا والذكاء الاصطناعي",

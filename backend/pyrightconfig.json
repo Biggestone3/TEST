@@ -2,9 +2,12 @@
     "include": [
         "lna-app",
         "lna-db",
-        "lna-crawlers"
+        "lna-crawlers",
+        "function-app"
     ],
-    "extraPaths": ["./lna-db"],
+    "extraPaths": [
+        "./lna-db"
+    ],
     "exclude": [
         "**/node_modules",
         "**/__pycache__",

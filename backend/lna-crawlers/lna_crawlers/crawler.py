@@ -114,8 +114,8 @@ async def get_feed(src: Source, article_count: int) -> None:
 
     await asyncio.gather(*tasks)
     # Use string ID as dictionary key to avoid Optional[PydanticObjectId] issues
-    if src.id is not None:
-        article_Dict[str(src.id)] = source_articles
+    if src.uuid is not None:
+        article_Dict[str(src.uuid)] = source_articles
         await add_articles_to_db(src, source_articles)
 
 
@@ -165,8 +165,8 @@ async def fetch_articles(
 
         await asyncio.gather(*tasks)
         # Use string ID as dictionary key to avoid Optional[PydanticObjectId] issues
-        if src.id is not None:
-            article_Dict[str(src.id)] = source_articles
+        if src.uuid is not None:
+            article_Dict[str(src.uuid)] = source_articles
             await add_articles_to_db(src, source_articles)
 
     except Exception as e:
@@ -223,7 +223,7 @@ async def main() -> None:
         (uuid.UUID(int=2)): Source(
             uuid=uuid.UUID(int=2),
             name="mtv",
-            url="https://vodapi.mtv.com.lb/api/Service/GetArticlesByNewsSectionID?id=1&start=0&end=20&keywordId=-1&onlyWithSource=false&type=&authorId=-1&platform=&isLatin=",
+            url="https://vodapi.mtv.com.lb/api/Service/GetArticlesByNewsSectionID?id=-1&authorId=-1&start=0&end=20&keywordId=-1&onlyWithSource=false&type=&platform=&isLatin=false",
             content_html_key=("p", "_pragraphs"),
             has_rss=False,
         ),

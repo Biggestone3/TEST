@@ -13,7 +13,6 @@ class TestNewsAPI(unittest.IsolatedAsyncioTestCase):
         """Override FastAPI's get_database() dependency before each test."""
         # Initialize the mock database
         await init_mock_db()
-        # await init_database()
         self.client = TestClient(app)
 
     async def asyncTearDown(self) -> None:

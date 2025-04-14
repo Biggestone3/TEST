@@ -13,9 +13,17 @@ if TYPE_CHECKING:
 DATABASE_NAME: str = "my_db"
 
 
-async def init_database() -> None:
+async def init_database(
+    username: str,
+    password: str,
+    mongo_uri_part2: str,
+) -> None:
     """Initialize Beanie with all models using the real database."""
-    async_client = initialize()  # Get the ASYNC MongoDB client
+    async_client = initialize(
+        username=username,
+        password=password,
+        mongo_uri_part2=mongo_uri_part2,
+    )
     db: AsyncIOMotorDatabase = async_client[DATABASE_NAME]
 
     models = [User, Source, Article, AggregatedStory, UserPreferences]

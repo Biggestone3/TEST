@@ -22,10 +22,17 @@ async def lifespan(app: FastAPI):  # pyre-ignore
     # Startup
     load_dotenv()
     use_mock_db = os.environ.get("USE_MOCK_DB", "false").lower() == "true"
+    username = str(os.environ.get("username_of_db"))
+    password = str(os.environ.get("password_of_db"))
+    mongo_uri_part2 = str(os.environ.get("mongo_uri_part2"))
     if use_mock_db:
         await init_mock_db()
     else:
-        await init_database()
+        await init_database(
+            username=username,
+            password=password,
+            mongo_uri_part2=mongo_uri_part2,
+        )
     yield
     # Shutdown (if we need cleanup later)
 

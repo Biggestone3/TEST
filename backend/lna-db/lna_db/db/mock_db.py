@@ -58,7 +58,6 @@ def get_mock_data() -> tuple[list[Source], list[Article], list[AggregatedStory]]
 
     mock_articles = [
         Article(
-            # id=ObjectId(),
             uuid=article_1_id,
             source_id=source_id,
             title="Breaking News",
@@ -68,7 +67,6 @@ def get_mock_data() -> tuple[list[Source], list[Article], list[AggregatedStory]]
             language=Language.ENGLISH,
         ),
         Article(
-            # id=ObjectId(),
             uuid=article_2_id,
             source_id=source_id,
             title="Technology Update",
@@ -78,7 +76,6 @@ def get_mock_data() -> tuple[list[Source], list[Article], list[AggregatedStory]]
             language=Language.ENGLISH,
         ),
         Article(
-            # id=ObjectId(),
             uuid=extra_article_en_id,
             source_id=extra_source_id,
             title="More AI News",
@@ -88,7 +85,6 @@ def get_mock_data() -> tuple[list[Source], list[Article], list[AggregatedStory]]
             language=Language.ENGLISH,
         ),
         Article(
-            # id=ObjectId(),
             uuid=arabic_article_1_id,
             source_id=arabic_source_id,
             title="تطورات التكنولوجيا",
@@ -98,7 +94,6 @@ def get_mock_data() -> tuple[list[Source], list[Article], list[AggregatedStory]]
             language=Language.ARABIC,
         ),
         Article(
-            # id=ObjectId(),
             uuid=arabic_article_2_id,
             source_id=arabic_source_id,
             title="مستقبل التقنية",
@@ -108,7 +103,6 @@ def get_mock_data() -> tuple[list[Source], list[Article], list[AggregatedStory]]
             language=Language.ARABIC,
         ),
         Article(
-            # id=ObjectId(),
             uuid=extra_article_ar_id,
             source_id=extra_arabic_source_id,
             title="تقرير خاص عن الذكاء الاصطناعي",
@@ -118,7 +112,6 @@ def get_mock_data() -> tuple[list[Source], list[Article], list[AggregatedStory]]
             language=Language.ARABIC,
         ),
         Article(
-            # id=ObjectId(),
             uuid=new_article_1_id,
             source_id=new_source_id_1,
             title="Quantum Computing Breakthrough",
@@ -128,7 +121,6 @@ def get_mock_data() -> tuple[list[Source], list[Article], list[AggregatedStory]]
             language=Language.ENGLISH,
         ),
         Article(
-            # id=ObjectId(),
             uuid=new_article_2_id,
             source_id=new_source_id_2,
             title="أخبار اقتصادية",
@@ -138,7 +130,6 @@ def get_mock_data() -> tuple[list[Source], list[Article], list[AggregatedStory]]
             language=Language.ARABIC,
         ),
         Article(
-            # id=ObjectId(),
             uuid=new_article_3_id,
             source_id=new_source_id_3,
             title="Climate Change Update",

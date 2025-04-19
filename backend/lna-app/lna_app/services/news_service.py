@@ -54,7 +54,6 @@ async def get_articles_paginated(skip: int = 0, limit: int = 10) -> list[Article
 async def create_user(user_data: UserCreate) -> None:
     preference = UserPreferences(**user_data.preferences)
     db_user = DbUser(
-        # id=ObjectId(),
         google_id=user_data.google_id,
         uuid=user_data.uuid,
         email=user_data.email,

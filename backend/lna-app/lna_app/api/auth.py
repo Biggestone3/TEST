@@ -5,7 +5,6 @@ from datetime import datetime, timedelta
 import httpx
 from fastapi import APIRouter, HTTPException
 from fastapi.responses import JSONResponse, RedirectResponse
-from fastapi.security import OAuth2PasswordBearer
 from google.auth.transport import requests as google_requests
 from google.oauth2 import id_token
 from jose import jwt
@@ -14,12 +13,8 @@ from pydantic import BaseModel
 
 router = APIRouter()
 
+
 # Security configuration
-SECRET_KEY = os.getenv("SECRET_KEY")
-ALGORITHM = "HS256"
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
-
-
 class CodePayload(BaseModel):
     """
     Pydantic model to accept the code sent by Google in the POST request body.
@@ -44,7 +39,7 @@ async def auth_google() -> RedirectResponse:
 
 # auth.py
 @router.post("/google/callback")
-async def google_callback(payload: CodePayload):
+async def google_callback(payload: CodePayload) -> dict[str, str]:
     code = payload.code
     """Improved with detailed error logging"""
     try:

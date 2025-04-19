@@ -62,7 +62,7 @@ class TimeBasedAggregator(AbstractAggregator):
             # add the article ids with no repetition
             old_article_ids = story.article_ids
             old_article_ids.extend(article_ids)
-            story.article_ids = set(old_article_ids)
+            story.article_ids = list(set(old_article_ids))
 
             # save (beanie does not support bulk upsert)
             await story.save()

@@ -8,7 +8,6 @@
     "extraPaths": [
         "./lna-db"
     ],
-    "extraPaths": ["./lna-db"],
     "exclude": [
         "**/node_modules",
         "**/__pycache__",

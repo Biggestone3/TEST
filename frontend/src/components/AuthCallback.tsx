@@ -13,7 +13,7 @@ const AuthCallback = () => {
                 if (!code) throw new Error('Missing authorization code');
 
                 const response = await fetch(
-                    `${import.meta.env.VITE_API_URL}/auth/google/callback`,
+                    `${import.meta.env.VITE_API_URL}/google/callback`,
                     {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },

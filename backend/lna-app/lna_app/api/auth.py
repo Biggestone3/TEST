@@ -1,22 +1,34 @@
 import os
+import urllib.parse
 from datetime import datetime, timedelta
-from typing import Any, Optional
 
 import httpx
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, HTTPException
 from fastapi.responses import JSONResponse, RedirectResponse
 from fastapi.security import OAuth2PasswordBearer
 from google.auth.transport import requests as google_requests
 from google.oauth2 import id_token
 from jose import jwt
 from lna_db.models.news import User
+from pydantic import BaseModel
 
 router = APIRouter()
 
 # Security configuration
-SECRET_KEY: Optional[str] = os.getenv("SECRET_KEY")
+SECRET_KEY = os.getenv("SECRET_KEY")
 ALGORITHM = "HS256"
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+
+
+class CodePayload(BaseModel):
+    """
+    Pydantic model to accept the code sent by Google in the POST request body.
+    We were originally sending the code as a query parameter, but Google doesn't
+    always accept that format. Switching to a JSON body aligns better with the
+    auth-code flow and helps avoid the bad request error.
+    """
+
+    code: str
 
 
 @router.get("/google")
@@ -32,24 +44,38 @@ async def auth_google() -> RedirectResponse:
 
 # auth.py
 @router.post("/google/callback")
-async def google_callback(code: str = Query(...)) -> dict[str, Any]:
+async def google_callback(payload: CodePayload):
+    code = payload.code
     """Improved with detailed error logging"""
     try:
         # Exchange code for tokens
         async with httpx.AsyncClient() as client:
-            token_response = await client.post(
-                "https://oauth2.googleapis.com/token",
-                data={
+            client_id = os.getenv("GOOGLE_CLIENT_ID")
+            client_secret = os.getenv("GOOGLE_CLIENT_SECRET")
+            redirect_uri = os.getenv("GOOGLE_REDIRECT_URI")
+            if not client_id:
+                raise RuntimeError("GOOGLE_CLIENT_ID is not set in the environment!")
+            if not client_secret:
+                raise RuntimeError(
+                    "GOOGLE_CLIENT_SECRET is not set in the environment!"
+                )
+            if not redirect_uri:
+                raise RuntimeError("GOOGLE_REDIRECT_URI is not set in the environment!")
+            encoded_payload = urllib.parse.urlencode(
+                {
                     "code": code,
-                    "client_id": os.getenv("GOOGLE_CLIENT_ID"),
-                    "client_secret": os.getenv("GOOGLE_CLIENT_SECRET"),
-                    "redirect_uri": os.getenv("GOOGLE_REDIRECT_URI"),
+                    "client_id": client_id,
+                    "client_secret": client_secret,
+                    "redirect_uri": "postmessage",
                     "grant_type": "authorization_code",
-                },
+                }
             )
 
-            # Log raw Google response
-            print("Google Token Response:", token_response.text)
+            token_response = await client.post(
+                "https://oauth2.googleapis.com/token",
+                content=encoded_payload,
+                headers={"Content-Type": "application/x-www-form-urlencoded"},
+            )
 
             token_response.raise_for_status()
             tokens = token_response.json()
@@ -58,7 +84,6 @@ async def google_callback(code: str = Query(...)) -> dict[str, Any]:
         idinfo = id_token.verify_oauth2_token(
             tokens["id_token"], google_requests.Request(), os.getenv("GOOGLE_CLIENT_ID")
         )
-        print("Verified User Info:", idinfo)
 
         # Find/create user
         user = await User.find_one({"google_id": idinfo["sub"]})
@@ -87,7 +112,7 @@ async def google_callback(code: str = Query(...)) -> dict[str, Any]:
 
     except httpx.HTTPStatusError as e:
         print(" HTTP Error:", e.response.text)
-        raise HTTPException(status_code=400, detail="Google API error")
+        raise HTTPException(status_code=400, detail=e.response.text)
 
     except ValueError as e:
         print(" Token Validation Error:", str(e))

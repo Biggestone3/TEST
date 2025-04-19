@@ -4,7 +4,6 @@ import { Box } from '@mui/material';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import SearchAppBar from './components/Appbar';
 import NewsStack from './components/NewsStack';
-import LoginError from './components/LoginError';
 import AuthCallback from './components/AuthCallback';
 
 
@@ -27,7 +26,7 @@ export default function App() {
                 <NewsStack language={language} />
               </Box>
             } />
-            <Route path="/login-error" element={<LoginError />} />
+            
             <Route path="/auth/callback" element={<AuthCallback />} />
           </Routes>
         </Box>

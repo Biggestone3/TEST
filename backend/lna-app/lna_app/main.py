@@ -43,12 +43,11 @@ app = FastAPI(
 )
 # CORS Configuration
 app.add_middleware(
-    CORSMiddleware,  # pyre-ignore
+    CORSMiddleware,
     allow_origins=["http://localhost:5173"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
-    expose_headers=["Cross-Origin-Opener-Policy"],
 )
 # Include routers
 app.include_router(auth.router, prefix="/api/auth")

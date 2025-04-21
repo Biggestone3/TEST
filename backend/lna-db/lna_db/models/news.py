@@ -42,6 +42,7 @@ class UserPreferences(Document):
 class User(TimeStampedModel):
     """User model for the application."""
 
+
     uuid: UUIDstr = Field(default_factory=uuid4)
     google_id: Annotated[str, Indexed(unique=True)] = Field(...)
     email: Annotated[EmailStr, Indexed(unique=True)] = Field(
@@ -62,6 +63,7 @@ class User(TimeStampedModel):
 
 class Source(TimeStampedModel):
     """News source model."""
+
 
     uuid: UUIDstr = Field(default_factory=uuid4)
     name: str = Field(..., description="Display name of the source")
@@ -86,6 +88,7 @@ class Source(TimeStampedModel):
 class Article(TimeStampedModel):
     """Article model representing a news article."""
 
+
     uuid: UUIDstr = Field(default_factory=uuid4)
     source_id: UUIDstr = Field(
         ..., description="Reference to the Source this article belongs to"
@@ -99,6 +102,7 @@ class Article(TimeStampedModel):
     )
     title: str = Field(..., description="Title of the article")
     content: str = Field(..., description="Content of the article")
+
     language: Language = Language.UNKNOWN
 
     class Config:
@@ -110,6 +114,7 @@ class Article(TimeStampedModel):
 
 class AggregatedStory(TimeStampedModel):
     """Model representing a clustered or aggregated news story."""
+
 
     uuid: UUIDstr = Field(default_factory=uuid4)
     title: str = Field(..., description="Title of the aggregated story")
@@ -130,6 +135,6 @@ class AggregatedStory(TimeStampedModel):
 
     class Config:
         arbitrary_types_allowed = True
-
+        
     class Settings:
         name = "stories"

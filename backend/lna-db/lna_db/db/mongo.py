@@ -2,6 +2,7 @@ from typing import TYPE_CHECKING
 
 from beanie import init_beanie
 
+
 from lna_db.db.db import (
     initialize,  # Import your initialize function  # Import your initialize function
 )
@@ -11,6 +12,7 @@ if TYPE_CHECKING:
     from motor.motor_asyncio import AsyncIOMotorDatabase
 
 DATABASE_NAME: str = "my_db"
+
 
 
 async def init_database(

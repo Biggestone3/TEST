@@ -8,6 +8,7 @@ interface NewsStackProps {
 }
 
 export default function NewsStack({ language }: NewsStackProps) {
+
   const [news, setNews] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
@@ -34,6 +35,7 @@ export default function NewsStack({ language }: NewsStackProps) {
       width: '90vw',
       maxWidth: '100%',
       padding: 3,
+
       direction: language === 'ar' ? 'rtl' : 'ltr',
     }}>
       {news.map((newsItem, index) => (

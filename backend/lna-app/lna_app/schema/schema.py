@@ -56,6 +56,7 @@ class Source(BaseModel):
         urls: List of URLs associated with the source (e.g., homepage, RSS feed).
     """
 
+
     uuid: UUIDstr = Field(
         default_factory=uuid4, description="Unique identifier for the article (UUID)."
     )
@@ -80,6 +81,7 @@ class Article(BaseModel):
         content: Full body text of the article.
         language: Language of the article, defaults to UNKNOWN if undetermined.
     """
+
 
     uuid: UUIDstr = Field(
         default_factory=uuid4, description="Unique identifier for the article (UUID)."
@@ -112,6 +114,7 @@ class AggregatedStory(BaseModel):
         among articles).
         article_ids: List of article IDs (UUIDs) that belong to this aggregated story.
     """
+
 
     uuid: UUIDstr = Field(
         default_factory=uuid4, description="Unique identifier for the article (UUID)."
@@ -164,6 +167,7 @@ class ArticleListResponse(BaseModel):
 
 
 class UserCreate(BaseModel):
+
     google_id: str
     uuid: UUIDstr = Field(
         default_factory=uuid4, description="Unique identifier for the user (UUID)."

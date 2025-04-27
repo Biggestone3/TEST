@@ -1,6 +1,9 @@
-from typing import Any
+# services/news_service.py
+from datetime import datetime
+from typing import Any, Optional
 
-from lna_db.core.types import Language
+from beanie import SortDirection
+from lna_db.core.types import Language, UUIDstr
 from lna_db.models.news import (
     AggregatedStory as DbAggregatedStory,
 )
@@ -17,11 +20,14 @@ from lna_db.models.news import (
     UserPreferences,
 )
 
+from lna_app.latency_utils import timeit
 from lna_app.schema.schema import (
     AggregatedStory,
     AggregatedStoryCreate,
     Article,
     ArticleCreate,
+    EnrichedArticle,
+    EnrichedStory,
     Source,
     SourceCreate,
     User,
@@ -54,7 +60,6 @@ async def get_articles_paginated(skip: int = 0, limit: int = 10) -> list[Article
 async def create_user(user_data: UserCreate) -> None:
     preference = UserPreferences(**user_data.preferences)
     db_user = DbUser(
-
         google_id=user_data.google_id,
         uuid=user_data.uuid,
         email=user_data.email,
@@ -67,7 +72,6 @@ async def create_user(user_data: UserCreate) -> None:
 
 async def create_source(source_data: SourceCreate) -> None:
     db_source = DbSource(
-
         uuid=source_data.uuid,
         url=source_data.url,
         name=source_data.name,
@@ -77,10 +81,8 @@ async def create_source(source_data: SourceCreate) -> None:
 
 async def create_article(article_data: ArticleCreate) -> None:
     try:
-        # Convert the language field to the Language enum type
         language = Language(article_data.language)
         article = DbArticle(
-
             uuid=article_data.uuid,
             source_id=article_data.source_id,
             url=article_data.url,
@@ -89,68 +91,111 @@ async def create_article(article_data: ArticleCreate) -> None:
             content=article_data.content,
             language=language,
         )
-        # Insert the article into the database
         await article.insert()
-
     except Exception as e:
-        # Handle any errors during article creation
         raise ValueError(f"Failed to create article: {str(e)}")
 
 
 async def create_aggregated_story(story_data: AggregatedStoryCreate) -> None:
     language = Language(story_data.language)
     db_story = DbAggregatedStory(
-
         uuid=story_data.uuid,
         title=story_data.title,
         summary=story_data.summary,
         language=language,
         publish_date=story_data.publish_date,
         article_ids=story_data.article_ids,
-
         aggregation_key="",
         aggregator="manual_create",
     )
     await db_story.insert()
 
 
-async def get_stories_enriched() -> list[dict[str, Any]]:
-    db_stories = await DbAggregatedStory.find_all().to_list()
-    enriched_stories: list[dict[str, Any]] = []
+@timeit
+async def get_enriched_stories(
+    cutoff_date: datetime,
+    offset: int = 0,
+    page_size: int = 10,
+    source_ids: Optional[list[UUIDstr]] = None,
+) -> list[EnrichedStory]:
+    """
+    returns paginated stories sorted by most recent with:
+      1. story.publish_date < cutoff_date
+      2. if source_ids is provided, story.article_ids must contain at least one article
+         whose Article.source_id is in source_ids
+    """
 
-    for story in db_stories:
-        # Convert to UUIDs just in case they're strings
-        article_ids = [str(aid) for aid in story.article_ids]
-        articles = await DbArticle.find({"uuid": {"$in": article_ids}}).to_list()
+    query: dict[str, Any] = {"publish_date": {"$lt": cutoff_date}}
+    if source_ids:  # only add the $all clause when list is non‐empty
+        query["source_ids"] = {"$all": source_ids}
 
-        source_ids = [str(article.source_id) for article in articles]
-        sources = await DbSource.find({"uuid": {"$in": source_ids}}).to_list()
-        source_map = {
-            str(source.uuid): {"name": source.name, "url": source.url}
-            for source in sources
-        }
-        enriched_articles = [
-            {
-                "id": str(article.uuid),
-                "source_name": source_map.get(str(article.source_id), {}).get(
-                    "name", "Unknown Source"
-                ),
-                "source_url": source_map.get(str(article.source_id), {}).get(
-                    "url", None
-                ),
-            }
-            for article in articles
-        ]
+    matching_stories = (
+        await DbAggregatedStory.find(query)
+        .sort(
+            [
+                ("publish_date", SortDirection.DESCENDING),
+                ("_id", SortDirection.DESCENDING),
+            ]
+        )
+        .skip(offset)
+        .limit(page_size)
+        .to_list()
+    )
 
+    print(f"matching_stories_count: {len(matching_stories)}")
+
+    # get all matching articles
+    matching_article_ids: list[UUIDstr] = []
+    for story in matching_stories:
+        matching_article_ids.extend([id for id in story.article_ids])
+    matching_article_ids = list(set(matching_article_ids))
+    matching_articles = await DbArticle.find(
+        {"uuid": {"$in": matching_article_ids}}
+    ).to_list()
+    article_id_to_article: dict[UUIDstr, DbArticle] = {
+        article.uuid: article for article in matching_articles
+    }
+
+    print(f"matching_articles_count: {len(matching_article_ids)}")
+
+    # get all matching sources
+    matching_source_ids = []
+    for story in matching_stories:
+        matching_source_ids.extend([id for id in story.source_ids])
+    matching_source_ids = list(set(matching_source_ids))
+    matching_sources = await DbSource.find(
+        {"uuid": {"$in": matching_source_ids}}
+    ).to_list()
+    source_id_to_source: dict[UUIDstr, Source] = {
+        article.uuid: article for article in matching_sources
+    }
+
+    print(f"matching_sources_count: {len(matching_source_ids)}")
+
+    # enrich the stories
+    enriched_stories: list[EnrichedStory] = []
+    for story in matching_stories:
+        articles = [article_id_to_article[uuid] for uuid in story.article_ids]
+        enriched_articles = []
+        for article in articles:
+            if article.source_id in source_id_to_source:
+                # only inlcude articles with sources in the story sources.
+                enriched_articles.append(
+                    EnrichedArticle(
+                        id=article.uuid,
+                        source_name=source_id_to_source[article.source_id].name,
+                        source_url=article.url,
+                    )
+                )
         enriched_stories.append(
-            {
-                "id": str(story.id),
-                "title": story.title,
-                "summary": story.summary,
-                "language": story.language.value,
-                "publish_date": story.publish_date.isoformat(),
-                "articles": enriched_articles,
-            }
+            EnrichedStory(
+                id=story.uuid,
+                title=story.title,
+                summary=story.summary,
+                language=story.language,
+                publish_date=story.publish_date,
+                articles=enriched_articles,
+            )
         )
 
     return enriched_stories

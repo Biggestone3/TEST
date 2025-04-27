@@ -34,9 +34,9 @@ export default function NewsCard({ newsItem, language }: NewsCardProps) {
   const fullContent = contentText;
   const hasMoreContent = contentText.includes('\n');
 
-  const sources = Array.isArray(newsItem.sources) ? newsItem.sources : [];
-  const visibleSources = showAllSources ? sources : sources.slice(0, 2);
-  const hasMoreSources = sources.length > 2;
+  const articles = Array.isArray(newsItem.articles) ? newsItem.articles : [];
+  const visibleArticles = showAllSources ? articles : articles.slice(0, 3);
+  const hasMoreArticles = articles.length > 2;
 
   return (
     <Card
@@ -148,7 +148,7 @@ export default function NewsCard({ newsItem, language }: NewsCardProps) {
         )}
 
         {/* Sources Section */}
-        {sources.length > 0 && (
+        {articles.length > 0 && (
           <Box sx={{ mt: isMobile ? 1 : 3 }}>
             <Typography
               variant="subtitle2"
@@ -163,10 +163,10 @@ export default function NewsCard({ newsItem, language }: NewsCardProps) {
             </Typography>
 
             <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: isMobile ? 1 : 2 }}>
-              {visibleSources.map((source, index) => (
+              {visibleArticles.map((source, index) => (
                 <Link
                   key={index}
-                  href={source.url}
+                  href={source.article_url}
                   target="_blank"
                   rel="noopener"
                   sx={{
@@ -176,11 +176,11 @@ export default function NewsCard({ newsItem, language }: NewsCardProps) {
                     fontSize: isMobile ? '0.8rem' : '0.9rem',
                   }}
                 >
-                  {source.name}
+                  {source.article_url}
                 </Link>
               ))}
 
-              {hasMoreSources && (
+              {hasMoreArticles && (
                 <Typography
                   variant="body2"
                   color="primary"

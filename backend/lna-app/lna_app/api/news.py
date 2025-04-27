@@ -1,14 +1,15 @@
-from typing import Any
+# news.py
 
 from fastapi import APIRouter, FastAPI
 
 from lna_app.schema.schema import (
     AggregatedStoryCreate,
-    AggregatedStoryListResponse,
     ArticleCreate,
     ArticleListResponse,
+    EnrichedStoryListResponse,
     SourceCreate,
     SourceListResponse,
+    StoryFilterRequest,
     UserCreate,
     UserListResponse,
 )
@@ -18,9 +19,8 @@ from lna_app.services.news_service import (
     create_source,
     create_user,
     get_articles_paginated,
+    get_enriched_stories,
     get_sources_paginated,
-    get_stories_enriched,
-    get_stories_paginated,
     get_users_paginated,
 )
 
@@ -28,11 +28,24 @@ app = FastAPI()
 router = APIRouter()
 
 
-@router.get("/stories", response_model=AggregatedStoryListResponse)
-async def get_stories() -> AggregatedStoryListResponse:
-    """Fetch and return all stories."""
-    stories = await get_stories_paginated()
-    return AggregatedStoryListResponse(stories=stories)
+@router.post("/stories", response_model=EnrichedStoryListResponse)
+async def get_stories(filter_req: StoryFilterRequest) -> EnrichedStoryListResponse:
+    """
+    Fetch enriched stories with optional source name filtering.
+
+    - **start_time:** Return stories published after this timestamp.
+    - **offset:** Skip this many filtered stories.
+    - **page_size:** Return exactly this many filtered stories (after filtering).
+    - **sourceNames:** A list of source names to filter stories.
+      If empty, stories are returned without additional filtering.
+    """
+    result = await get_enriched_stories(
+        cutoff_date=filter_req.cuttof_date,
+        offset=filter_req.offset,
+        page_size=filter_req.page_size,
+        source_ids=filter_req.source_ids,
+    )
+    return EnrichedStoryListResponse(enriched_stories=result)
 
 
 @router.get("/users", response_model=UserListResponse)
@@ -74,16 +87,10 @@ async def create_article_endpoint(article_data: ArticleCreate) -> None:
     await create_article(article_data)
 
 
-@router.post("/stories")
+@router.post("/stories/create")
 async def create_story_endpoint(story_data: AggregatedStoryCreate) -> None:
     """Create a new aggregated story."""
     await create_aggregated_story(story_data)
-
-
-@router.get("/stories_testing")
-async def get_stories_en() -> list[dict[str, Any]]:
-    """Fetch stories enriched with article source names and url of each source."""
-    return await get_stories_enriched()
 
 
 app.include_router(router)

@@ -1,4 +1,4 @@
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 from uuid import UUID
 
 from beanie import init_beanie
@@ -11,7 +11,7 @@ from lna_db.models.news import AggregatedStory, Article, Source
 client: AsyncMongoMockClient = AsyncMongoMockClient()
 db: AsyncMongoMockDatabase = client.get_database("test_database")
 
-# Sample data with fixed UUIDs for testing
+# UUIDs
 source_id: UUID = UUID("550e8400-e29b-41d4-a716-446655440000")
 arabic_source_id: UUID = UUID("660e8400-e29b-41d4-a716-446655440000")
 extra_source_id = UUID("770e8400-e29b-41d4-a716-446655440000")
@@ -24,7 +24,6 @@ arabic_article_2_id: UUID = UUID("e724d849-5ad3-4e42-a29c-50049c6f4b38")
 extra_article_en_id = UUID("f824d849-5ad3-4e42-a29c-50049c6f4b38")
 extra_article_ar_id = UUID("b924d849-5ad3-4e42-a29c-50049c6f4b38")
 
-# New sources and articles
 new_source_id_1 = UUID("990e8400-e29b-41d4-a716-446655440000")
 new_source_id_2 = UUID("aa0e8400-e29b-41d4-a716-446655440000")
 new_source_id_3 = UUID("bb0e8400-e29b-41d4-a716-446655440000")
@@ -35,7 +34,6 @@ new_article_3_id = UUID("e824d849-5ad3-4e42-a29c-50049c6f4b38")
 
 
 def get_mock_data() -> tuple[list[Source], list[Article], list[AggregatedStory]]:
-    """Get the mock data for testing."""
     mock_sources = [
         Source(uuid=source_id, name="Global News Network", url="https://news.com"),
         Source(
@@ -142,7 +140,6 @@ def get_mock_data() -> tuple[list[Source], list[Article], list[AggregatedStory]]
 
     mock_stories = [
         AggregatedStory(
-
             uuid=UUID("c734d941-4fd2-4819-a3b7-7cc8971ab25e"),
             title="Technology and AI Developments",
             summary="Latest developments and predictions in technology and AI",
@@ -155,7 +152,6 @@ def get_mock_data() -> tuple[list[Source], list[Article], list[AggregatedStory]]
                 new_article_1_id,
                 new_article_3_id,
             ],
-
             aggregation_key="",
             aggregator="manual_create",
         ),
@@ -176,26 +172,44 @@ def get_mock_data() -> tuple[list[Source], list[Article], list[AggregatedStory]]
         ),
     ]
 
+    # Add 30 auto-generated stories
+
+    base_time = datetime(2024, 3, 16, 8, 0, tzinfo=UTC)
+
+    for i in range(50):
+        story_id = UUID(f"11111111-1111-1111-1111-{str(i).zfill(12)}")
+        publish_date = base_time + timedelta(minutes=i)
+        mock_stories.append(
+            AggregatedStory(
+                id=story_id,
+                title=f"Generated Story {i + 1}",
+                summary=f"Auto-generated summary for story {i + 1}",
+                language=Language.ENGLISH if i % 2 == 0 else Language.ARABIC,
+                publish_date=publish_date,
+                article_ids=[
+                    new_article_1_id,
+                    new_article_2_id if i % 2 == 0 else new_article_3_id,
+                ],
+                aggregator="mock_db",
+            )
+        )
+
     return mock_sources, mock_articles, mock_stories
 
 
 async def init_mock_db() -> None:
     """Initialize the mock database with sample data."""
-    # Initialize Beanie with our models
     await init_beanie(
         database=db,  # type: ignore
         document_models=[Source, Article, AggregatedStory],
     )
 
-    # Clear existing data
     await Source.delete_all()
     await Article.delete_all()
     await AggregatedStory.delete_all()
 
-    # Get mock data
     mock_sources, mock_articles, mock_stories = get_mock_data()
 
-    # Insert mock data
     for source in mock_sources:
         await source.save()
 

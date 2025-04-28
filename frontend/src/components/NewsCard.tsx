@@ -4,6 +4,7 @@ import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';
+import Chip from '@mui/material/Chip';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
@@ -17,11 +18,86 @@ interface NewsCardProps {
   language: 'ar' | 'en';
 }
 
+// Helper function to shorten URLs for display
+const shortenUrl = (url: string): string => {
+  try {
+    const urlObj = new URL(url);
+    let domain = urlObj.hostname;
+
+    // Remove www. if present
+    if (domain.startsWith('www.')) {
+      domain = domain.substring(4);
+    }
+
+    // For very long domains, truncate
+    if (domain.length > 25) {
+      domain = domain.substring(0, 22) + '...';
+    }
+
+    // Add path if it's short, otherwise truncate
+    let path = urlObj.pathname;
+    if (path.length > 1) {
+      if (path.length > 15) {
+        path = path.substring(0, 12) + '...';
+      }
+    } else {
+      path = '';
+    }
+
+    return domain + path;
+  } catch (e) {
+    // If the URL is invalid, return a truncated version of the original
+    return url.length > 30 ? url.substring(0, 27) + '...' : url;
+  }
+};
+
+// Helper function to format date based on language
+const formatDate = (date: Date | string | undefined, language: 'ar' | 'en'): string => {
+  if (!date) return '';
+
+  try {
+    const dateObj = typeof date === 'string' ? new Date(date) : date;
+
+    // Check if the date is valid
+    if (isNaN(dateObj.getTime())) return '';
+
+    // Format date based on language
+    if (language === 'ar') {
+      // Arabic date format
+      const options: Intl.DateTimeFormatOptions = {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: 'numeric',
+        minute: 'numeric',
+        hour12: true,
+        timeZoneName: 'short'
+      };
+      return new Intl.DateTimeFormat('ar-AE', options).format(dateObj);
+    } else {
+      // English date format
+      const options: Intl.DateTimeFormatOptions = {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: 'numeric',
+        minute: 'numeric',
+        hour12: true,
+        timeZoneName: 'short'
+      };
+      return new Intl.DateTimeFormat('en-US', options).format(dateObj);
+    }
+  } catch (e) {
+    console.error('Error formatting date:', e);
+    return '';
+  }
+};
+
 export default function NewsCard({ newsItem, language }: NewsCardProps) {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const [expanded, setExpanded] = React.useState(false);
-  const [showAllSources, setShowAllSources] = React.useState(false);
+  const [showAllArticles, setShowAllArticles] = React.useState(false);
   const isRTL = language === 'ar';
 
   const imageUrl =
@@ -35,8 +111,15 @@ export default function NewsCard({ newsItem, language }: NewsCardProps) {
   const hasMoreContent = contentText.includes('\n');
 
   const articles = Array.isArray(newsItem.articles) ? newsItem.articles : [];
-  const visibleArticles = showAllSources ? articles : articles.slice(0, 3);
+  const visibleArticles = showAllArticles ? articles : articles.slice(0, 3);
   const hasMoreArticles = articles.length > 2;
+
+  // Format the publication date
+  const formattedDate = formatDate(newsItem.publish_date, language);
+
+  // Get sources from the News item
+  const sources = Array.isArray(newsItem.sources) ? newsItem.sources : [];
+  const hasSources = sources.length > 0;
 
   return (
     <Card
@@ -108,6 +191,56 @@ export default function NewsCard({ newsItem, language }: NewsCardProps) {
             {newsItem.title || 'Untitled'}
           </Typography>
 
+          {/* Publication Date */}
+          {formattedDate && (
+            <Typography
+              variant="subtitle1"
+              sx={{
+                color: 'text.secondary',
+                textAlign: isRTL ? 'right' : 'left',
+                mb: 2,
+                mt: -1,
+                fontSize: isMobile ? '0.8rem' : '0.9rem',
+              }}
+            >
+              {isRTL ? `نُشر في: ${formattedDate}` : `Published: ${formattedDate}`}
+            </Typography>
+          )}
+
+          {/* Source Tags */}
+          {hasSources && (
+            <Box
+              sx={{
+                display: 'flex',
+                flexWrap: 'wrap',
+                gap: 0.5,
+                mb: 2,
+                flexDirection: isRTL ? 'row-reverse' : 'row'
+              }}
+            >
+              {sources.map((source, index) => (
+                <Chip
+                  key={index}
+                  label={source.name}
+                  size="small"
+                  color="primary"
+                  variant="outlined"
+                  clickable
+                  component="a"
+                  href={source.url}
+                  target="_blank"
+                  rel="noopener"
+                  sx={{
+                    fontSize: isMobile ? '0.7rem' : '0.8rem',
+                    height: 'auto',
+                    py: 0.5,
+                    direction: isRTL ? 'rtl' : 'ltr',
+                  }}
+                />
+              ))}
+            </Box>
+          )}
+
           <Typography
             paragraph
             sx={{
@@ -147,7 +280,7 @@ export default function NewsCard({ newsItem, language }: NewsCardProps) {
           </Typography>
         )}
 
-        {/* Sources Section */}
+        {/* Articles Section */}
         {articles.length > 0 && (
           <Box sx={{ mt: isMobile ? 1 : 3 }}>
             <Typography
@@ -159,14 +292,14 @@ export default function NewsCard({ newsItem, language }: NewsCardProps) {
                 fontSize: isMobile ? '0.8rem' : '0.9rem',
               }}
             >
-              {isRTL ? 'المصادر:' : 'Sources:'}
+              {isRTL ? 'المقالات:' : 'Articles:'}
             </Typography>
 
             <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: isMobile ? 1 : 2 }}>
               {visibleArticles.map((source, index) => (
                 <Link
                   key={index}
-                  href={source.article_url}
+                  href={source.url}
                   target="_blank"
                   rel="noopener"
                   sx={{
@@ -175,8 +308,9 @@ export default function NewsCard({ newsItem, language }: NewsCardProps) {
                     '&:hover': { textDecoration: 'underline' },
                     fontSize: isMobile ? '0.8rem' : '0.9rem',
                   }}
+                  title={source.url} // Show full URL on hover
                 >
-                  {source.article_url}
+                  {shortenUrl(source.url)}
                 </Link>
               ))}
 
@@ -184,20 +318,20 @@ export default function NewsCard({ newsItem, language }: NewsCardProps) {
                 <Typography
                   variant="body2"
                   color="primary"
-                  onClick={() => setShowAllSources(!showAllSources)}
+                  onClick={() => setShowAllArticles(!showAllArticles)}
                   sx={{
                     cursor: 'pointer',
                     '&:hover': { textDecoration: 'underline' },
                     fontSize: isMobile ? '0.8rem' : '0.9rem',
                   }}
                 >
-                  {showAllSources
+                  {showAllArticles
                     ? isRTL
                       ? 'عرض أقل'
                       : 'Show Less'
                     : isRTL
-                      ? 'المزيد من المصادر'
-                      : 'More Sources'}
+                      ? 'المزيد من المقالات'
+                      : 'More Articles'}
                 </Typography>
               )}
             </Box>

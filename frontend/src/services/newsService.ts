@@ -52,8 +52,8 @@ export const fetchNews = async ({
         new Map(sources.map((s) => [s.name, s])).values()
       );
 
-      const article_urls = story.articles.map((a: Article) => ({
-        article_url: a.source_url
+      const urls = story.articles.map((a: Article) => ({
+        url: a.url
       }))
 
       return new News(
@@ -62,7 +62,7 @@ export const fetchNews = async ({
         story.language,
         story.imageUrl || defaultImage,
         uniqueSources,
-        article_urls,
+        urls,
         new Date(story.publish_date)
       );
     });

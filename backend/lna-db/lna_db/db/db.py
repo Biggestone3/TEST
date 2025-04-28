@@ -1,11 +1,10 @@
-
 from urllib.parse import quote_plus
 
 from dotenv import load_dotenv
 from motor.motor_asyncio import AsyncIOMotorClient
 
-
 # Encode username and password
+
 
 def initialize(
     username: str,

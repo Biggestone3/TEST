@@ -210,6 +210,7 @@ class EnrichedArticle(BaseModel):
     """Represents article info for a story, including the source details."""
 
     id: UUIDstr
+    url: str
     source_name: str
     source_url: Optional[str] = None
 

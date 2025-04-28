@@ -181,7 +181,7 @@ def get_mock_data() -> tuple[list[Source], list[Article], list[AggregatedStory]]
         publish_date = base_time + timedelta(minutes=i)
         mock_stories.append(
             AggregatedStory(
-                id=story_id,
+                uuid=story_id,
                 title=f"Generated Story {i + 1}",
                 summary=f"Auto-generated summary for story {i + 1}",
                 language=Language.ENGLISH if i % 2 == 0 else Language.ARABIC,
@@ -191,6 +191,7 @@ def get_mock_data() -> tuple[list[Source], list[Article], list[AggregatedStory]]
                     new_article_2_id if i % 2 == 0 else new_article_3_id,
                 ],
                 aggregator="mock_db",
+                aggregation_key=f"mock_key_{i}",
             )
         )
 

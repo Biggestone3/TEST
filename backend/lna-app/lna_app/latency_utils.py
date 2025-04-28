@@ -8,7 +8,7 @@ from collections.abc import Awaitable
 from contextlib import ContextDecorator
 from functools import wraps
 from time import perf_counter
-from typing import Callable, Optional, ParamSpec, TypeVar, overload
+from typing import Any, Callable, Optional, ParamSpec, TypeVar, cast, overload
 
 P = ParamSpec("P")
 R = TypeVar("R")
@@ -20,32 +20,32 @@ def timeit(func: Callable[P, R]) -> Callable[P, R]: ...
 def timeit(func: Callable[P, Awaitable[R]]) -> Callable[P, Awaitable[R]]: ...
 
 
-def timeit(func) -> None:
+def timeit(func: Callable[P, Any]) -> Callable[P, Any]:
     """
     Decorator to print how long a function or async function takes (in ms).
     """
     if inspect.iscoroutinefunction(func):
 
         @wraps(func)
-        async def async_wrapper(*args: P.args, **kwargs: P.kwargs) -> R:
+        async def async_wrapper(*args: P.args, **kwargs: P.kwargs) -> Any:
             start = perf_counter()
             result = await func(*args, **kwargs)
             elapsed_ms = (perf_counter() - start) * 1_000
             print(f"{func.__qualname__!r} took {elapsed_ms:.2f} ms")
             return result
 
-        return async_wrapper  # type: ignore
+        return cast(Callable[P, Awaitable[Any]], async_wrapper)
     else:
 
         @wraps(func)
-        def sync_wrapper(*args: P.args, **kwargs: P.kwargs) -> R:
+        def sync_wrapper(*args: P.args, **kwargs: P.kwargs) -> Any:
             start = perf_counter()
             result = func(*args, **kwargs)
             elapsed_ms = (perf_counter() - start) * 1_000
             print(f"{func.__qualname__!r} took {elapsed_ms:.2f} ms")
             return result
 
-        return sync_wrapper  # type: ignore
+        return cast(Callable[P, Any], sync_wrapper)
 
 
 class measure_latency(ContextDecorator):

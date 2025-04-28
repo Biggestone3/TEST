@@ -167,7 +167,8 @@ async def get_enriched_stories(
         {"uuid": {"$in": matching_source_ids}}
     ).to_list()
     source_id_to_source: dict[UUIDstr, Source] = {
-        article.uuid: article for article in matching_sources
+        article.uuid: Source(uuid=article.uuid, name=article.name, url=article.url)
+        for article in matching_sources
     }
 
     print(f"matching_sources_count: {len(matching_source_ids)}")
@@ -183,8 +184,9 @@ async def get_enriched_stories(
                 enriched_articles.append(
                     EnrichedArticle(
                         id=article.uuid,
+                        url=article.url,
                         source_name=source_id_to_source[article.source_id].name,
-                        source_url=article.url,
+                        source_url=source_id_to_source[article.source_id].url,
                     )
                 )
         enriched_stories.append(

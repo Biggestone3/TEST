@@ -1,4 +1,5 @@
 import importlib
+import importlib.metadata
 import logging
 import os
 import sys

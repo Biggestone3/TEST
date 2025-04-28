@@ -113,6 +113,10 @@ export default function SearchAppBar({ language, setLanguage }: SearchAppBarProp
     navigate('/');
   };
 
+  const handleRefresh = () => {
+    navigate(0);
+  };
+
   return (
     <>
       <AppBar position="fixed" sx={{
@@ -163,11 +167,16 @@ export default function SearchAppBar({ language, setLanguage }: SearchAppBarProp
           <Typography
             variant="h6"
             component="div"
+            onClick={handleRefresh}
             sx={{
               position: 'absolute',
               left: '50%',
               transform: 'translateX(-50%)',
-              color: 'black'
+              color: 'black',
+              cursor: 'pointer',
+              '&:hover': {
+                textDecoration: 'underline'
+              }
             }}
           >
             {isRTL ? 'الأخبار' : 'NEWS'}

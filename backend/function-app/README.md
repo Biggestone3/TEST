@@ -15,3 +15,10 @@ from function-app
 ``` bash
 func start
 ```
+
+
+### deploy
+click the deploy button here in azure Extension
+
+
+![alt text](assets/image.png)

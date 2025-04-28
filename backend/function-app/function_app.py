@@ -1,3 +1,4 @@
+import importlib
 import logging
 import os
 import sys
@@ -21,7 +22,11 @@ is_local = os.environ.get("AZURE_FUNCTIONS_ENVIRONMENT") == "Development"
 )
 async def story_aggregator_function(myTimer: func.TimerRequest) -> None:
     logging.info(f"Python path: {sys.path}")
-    logging.info("Story Aggregator Function executed at %s", datetime.now())
+    logging.info(f"Python interpreter: {sys.executable}")
+    execution_start_time = datetime.now(timezone.utc)
+    logging.info("Story Aggregator Function executed at %s", execution_start_time)
+    version = importlib.metadata.version("lna_db")
+    logging.info(f"lna_db version: {version}")
     load_dotenv()
     username = str(os.environ.get("username_of_db"))
     password = str(os.environ.get("password_of_db"))
@@ -41,4 +46,11 @@ async def story_aggregator_function(myTimer: func.TimerRequest) -> None:
     await time_based_aggregator.aggregate_stories(
         start_time=start_time,
         end_time=end_time,
+    )
+
+    execution_end_time = datetime.now(timezone.utc)
+    duration_ms = (execution_end_time - execution_start_time).total_seconds() * 1000
+    logging.info(
+        f"Story Aggregator Function done at {execution_end_time}."
+        + f"duration: {duration_ms} ms"
     )

@@ -27,7 +27,6 @@ export const fetchNews = async ({
       page_size: pageSize,
       source_ids: sourceIds,    // now sending UUIDs under the correct key
     };
-    console.log('🚀 fetchNews payload:', payload);
 
     const response = await fetch(url, {
       method: 'POST',

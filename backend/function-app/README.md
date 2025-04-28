@@ -4,3 +4,14 @@ from lna-db
 poetry build
 ```
 and then copy the .whl file you get into the vendor directory
+
+### Run locally
+from function-app: do it with the new version of lna_db if any.
+``` bash
+pip install --force-reinstall ./vendor/lna_db-0.3.0-py3-none-any.whl
+```
+
+from function-app
+``` bash
+func start
+```

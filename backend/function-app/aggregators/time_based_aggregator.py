@@ -26,6 +26,10 @@ class TimeBasedAggregator(AbstractAggregator):
             Article.publish_date >= start_time, Article.publish_date <= end_time
         ).to_list()
 
+        article_id_to_source_id = {
+            article.uuid: article.source_id for article in articles_in_range
+        }
+
         logging.info(f"found {len(articles_in_range)} articles in range")
 
         # for each article find the key which it is associated with
@@ -55,14 +59,20 @@ class TimeBasedAggregator(AbstractAggregator):
                     publish_date=datetime.now(timezone.utc),
                     aggregator=self.aggregator,
                     article_ids=[],
+                    source_ids=[],
                     aggregation_key=key,
                 ),
             )
 
             # add the article ids with no repetition
-            old_article_ids = story.article_ids
-            old_article_ids.extend(article_ids)
-            story.article_ids = list(set(old_article_ids))
+            story.article_ids.extend(article_ids)
+            story.article_ids = list(set(story.article_ids))
+
+            # add source ids with no repetition
+            story.source_ids.extend(
+                [article_id_to_source_id[article_id] for article_id in article_ids]
+            )
+            story.source_ids = list(set(story.source_ids))
 
             # save (beanie does not support bulk upsert)
             await story.save()

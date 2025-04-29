@@ -94,6 +94,7 @@ class Article(BaseModel):
     language: Language = Field(
         Language.UNKNOWN, description="Language of the article; defaults to UNKNOWN."
     )
+    crawler: str = Field(..., description="crawler name which generated this article")
 
 
 class AggregatedStory(BaseModel):
@@ -173,6 +174,7 @@ class ArticleCreate(BaseModel):
     title: str
     content: str
     language: str
+    crawler: str
 
 
 class AggregatedStoryCreate(BaseModel):

@@ -81,6 +81,7 @@ async def process_feed_entry(
             title=title,
             url=link,
             publish_date=datetime.min,
+            crawler="LNACrawlerTimer",
         )
 
         # Get publish date if available
@@ -154,6 +155,7 @@ async def fetch_articles(
                 content="No content to be displayed.",
                 title=article["name"],
                 publish_date=dt,
+                crawler="LNACrawlerTimer",
             )
             tasks.append(
                 asyncio.create_task(

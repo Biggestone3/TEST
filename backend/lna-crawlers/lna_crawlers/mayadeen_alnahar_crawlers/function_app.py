@@ -350,6 +350,7 @@ def crawler_1(myTimer: func.TimerRequest) -> None:
                             url=url_i,
                             publish_date=publish_date_i,
                             language=language_i,
+                            crawler="mayadeen_alnahar_crawler",
                         )
                     )
             except Exception as _:
@@ -401,6 +402,7 @@ def crawler_1(myTimer: func.TimerRequest) -> None:
                         url=url,
                         publish_date=unify_date_mayadeen(date),
                         language=get_language(info),
+                        crawler="mayadeen_alnahar_crawler",
                     )
                 )
 

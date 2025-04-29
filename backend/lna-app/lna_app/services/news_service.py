@@ -90,6 +90,7 @@ async def create_article(article_data: ArticleCreate) -> None:
             title=article_data.title,
             content=article_data.content,
             language=language,
+            crawler=article_data.crawler,
         )
         await article.insert()
     except Exception as e:

@@ -101,6 +101,10 @@ class Article(TimeStampedModel):
     content: str = Field(..., description="Content of the article")
 
     language: Language = Language.UNKNOWN
+    crawler: str = Field(
+        default="unknown_please_fill",
+        description="The crawler which generated this article",
+    )
 
     class Config:
         arbitrary_types_allowed = True

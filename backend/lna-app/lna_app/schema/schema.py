@@ -156,6 +156,7 @@ class UserCreate(BaseModel):
     preferences: dict[str, Any] = {}
 
 
+
 class SourceCreate(BaseModel):
     uuid: UUIDstr = Field(
         default_factory=uuid4, description="Unique identifier for the source (UUID)."
@@ -186,6 +187,25 @@ class AggregatedStoryCreate(BaseModel):
     language: str
     publish_date: datetime
     article_ids: list[UUIDstr]
+    aggregator: str = Field(
+        ...,description="The aggregator which lead to this aggregated story"
+    )
+    aggregation_key: str = Field(
+        ...,description="The key of the aggregation, for time based it will be the hour, for topic based it will be the topic"  
+    )
+
+class TimeBasedClusteringRequest(BaseModel):
+    """
+    Schema for time-based clustering request parameters.
+
+    Attributes:
+        start_time: The starting datetime to begin clustering from.
+        end_time: The ending datetime after which clustering should stop.
+        duration: Time window size in hours to group articles together.
+    """
+    start_time: datetime = Field(..., description="Start time in ISO format (e.g., 2023-10-01T12:00:00)")
+    end_time: datetime = Field(..., description="End time in ISO format (e.g., 2023-10-01T18:00:00)")
+    duration: int = Field(..., gt=0, description="Clustering duration in hours (e.g., 6 means 6-hour windows)")
 
 
 # --- New Request Model for Stories Filtering ---

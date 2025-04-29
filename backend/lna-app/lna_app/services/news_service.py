@@ -2,6 +2,9 @@
 from datetime import datetime
 from typing import Any, Optional
 
+from beanie.operators import And
+
+
 from beanie import SortDirection
 from lna_db.core.types import Language, UUIDstr
 from lna_db.models.news import (
@@ -32,8 +35,12 @@ from lna_app.schema.schema import (
     SourceCreate,
     User,
     UserCreate,
+    TimeBasedClusteringRequest,
 )
 
+from lna_app.services.clustering import generate_summary
+from datetime import datetime, timedelta, timezone
+from fastapi import Query
 
 async def get_stories_paginated(
     skip: int = 0, limit: int = 10
@@ -68,7 +75,6 @@ async def create_user(user_data: UserCreate) -> None:
         preferences=preference,
     )
     await db_user.insert()
-
 
 async def create_source(source_data: SourceCreate) -> None:
     db_source = DbSource(
@@ -107,7 +113,7 @@ async def create_aggregated_story(story_data: AggregatedStoryCreate) -> None:
         publish_date=story_data.publish_date,
         article_ids=story_data.article_ids,
         aggregation_key="",
-        aggregator="manual_create",
+        aggregator=story_data.aggregator,
     )
     await db_story.insert()
 
@@ -202,3 +208,43 @@ async def get_enriched_stories(
         )
 
     return enriched_stories
+
+async def cluster_articles_into_stories_by_date(
+        time_based_clustering_request: TimeBasedClusteringRequest
+) -> None:
+    range_begin = time_based_clustering_request.start_time.astimezone(timezone.utc)
+    end_time = time_based_clustering_request.end_time.astimezone(timezone.utc)
+    if range_begin >= end_time:
+        raise ValueError(f"Invalid time range provided. {range_begin=} >= {end_time=}") 
+    if range_begin > datetime.now(timezone.utc):
+        raise ValueError(f"Invalid time range provided. {range_begin=} > {datetime.now(timezone.utc)=}")
+    duration = int(time_based_clustering_request.duration)
+    while range_begin < end_time:
+        range_end = min(range_begin + timedelta(hours=duration), end_time)
+
+        # Query articles within the specified time range
+        db_articles = await DbArticle.find(
+            And(
+                DbArticle.publish_date > range_begin,
+                DbArticle.publish_date < range_end
+            )
+        ).to_list()
+
+        if not db_articles:
+            continue
+
+        summary_generated = generate_summary(db_articles)
+        ids = [article.uuid for article in db_articles]
+
+        story = AggregatedStoryCreate(
+            uuid=db_articles[0].uuid,
+            title=f"News from {range_begin} to {range_end}",
+            summary=summary_generated,
+            language=db_articles[0].language,
+            publish_date=datetime.now(),
+            article_ids=ids,
+            aggregator="Api_time_based_aggregator",
+            aggregation_key=f"News from {range_begin.isoformat()}, to {range_end.isoformat()}",
+        )
+        range_begin += timedelta(hours=duration)
+        await create_aggregated_story(story)

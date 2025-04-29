@@ -1,6 +1,7 @@
 # news.py
 
 from fastapi import APIRouter, FastAPI
+from datetime import datetime
 
 from lna_app.schema.schema import (
     AggregatedStoryCreate,
@@ -12,6 +13,7 @@ from lna_app.schema.schema import (
     StoryFilterRequest,
     UserCreate,
     UserListResponse,
+    TimeBasedClusteringRequest,
 )
 from lna_app.services.news_service import (
     create_aggregated_story,
@@ -22,6 +24,7 @@ from lna_app.services.news_service import (
     get_enriched_stories,
     get_sources_paginated,
     get_users_paginated,
+    cluster_articles_into_stories_by_date,
 )
 
 app = FastAPI()
@@ -75,10 +78,12 @@ async def create_source_endpoint(source_data: SourceCreate) -> None:
     await create_source(source_data)
 
 
+
 @router.post("/users")
 async def create_user_endpoint(user_data: UserCreate) -> None:
     """Create a new user."""
     await create_user(user_data)
+
 
 
 @router.post("/articles")
@@ -87,10 +92,18 @@ async def create_article_endpoint(article_data: ArticleCreate) -> None:
     await create_article(article_data)
 
 
+
 @router.post("/stories/create")
 async def create_story_endpoint(story_data: AggregatedStoryCreate) -> None:
     """Create a new aggregated story."""
     await create_aggregated_story(story_data)
 
+
+@router.post("/cluster_articles_by_time")
+async def cluster_articles_by_time(
+    time_based_clustering_request: TimeBasedClusteringRequest
+) -> None:
+    """Group the articles of the last day and put them as a story"""
+    await cluster_articles_into_stories_by_date(time_based_clustering_request)
 
 app.include_router(router)

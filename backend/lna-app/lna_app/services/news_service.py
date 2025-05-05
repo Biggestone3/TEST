@@ -1,11 +1,9 @@
 # services/news_service.py
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
 from typing import Any, Optional
 
-from beanie.operators import And
-
-
 from beanie import SortDirection
+from beanie.operators import And
 from lna_db.core.types import Language, UUIDstr
 from lna_db.models.news import (
     AggregatedStory as DbAggregatedStory,
@@ -33,14 +31,12 @@ from lna_app.schema.schema import (
     EnrichedStory,
     Source,
     SourceCreate,
+    TimeBasedClusteringRequest,
     User,
     UserCreate,
-    TimeBasedClusteringRequest,
 )
-
 from lna_app.services.clustering import generate_summary
-from datetime import datetime, timedelta, timezone
-from fastapi import Query
+
 
 async def get_stories_paginated(
     skip: int = 0, limit: int = 10
@@ -75,6 +71,7 @@ async def create_user(user_data: UserCreate) -> None:
         preferences=preference,
     )
     await db_user.insert()
+
 
 async def create_source(source_data: SourceCreate) -> None:
     db_source = DbSource(
@@ -209,15 +206,18 @@ async def get_enriched_stories(
 
     return enriched_stories
 
+
 async def cluster_articles_into_stories_by_date(
-        time_based_clustering_request: TimeBasedClusteringRequest
+    time_based_clustering_request: TimeBasedClusteringRequest,
 ) -> None:
     range_begin = time_based_clustering_request.start_time.astimezone(timezone.utc)
     end_time = time_based_clustering_request.end_time.astimezone(timezone.utc)
     if range_begin >= end_time:
-        raise ValueError(f"Invalid time range provided. {range_begin=} >= {end_time=}") 
+        raise ValueError(f"Invalid time range provided. {range_begin=} >= {end_time=}")
     if range_begin > datetime.now(timezone.utc):
-        raise ValueError(f"Invalid time range provided. {range_begin=} > {datetime.now(timezone.utc)=}")
+        raise ValueError(
+            f"Invalid time range provided. {range_begin=} > {datetime.now(timezone.utc)=}"
+        )
     duration = int(time_based_clustering_request.duration)
     while range_begin < end_time:
         range_end = min(range_begin + timedelta(hours=duration), end_time)
@@ -226,7 +226,7 @@ async def cluster_articles_into_stories_by_date(
         db_articles = await DbArticle.find(
             And(
                 DbArticle.publish_date > range_begin,
-                DbArticle.publish_date < range_end
+                DbArticle.publish_date < range_end,
             )
         ).to_list()
 

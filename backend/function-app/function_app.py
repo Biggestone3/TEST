@@ -6,9 +6,8 @@ import sys
 from datetime import datetime, timedelta, timezone
 
 import azure.functions as func
-from aggregators.time_based_aggregator import TimeBasedAggregator
 from dotenv import load_dotenv
-from lna_db.db.mongo import init_database
+from lna_aggregators.time_based_aggregator import TimeBasedAggregator
 
 app = func.FunctionApp()
 
@@ -28,20 +27,16 @@ async def story_aggregator_function(myTimer: func.TimerRequest) -> None:
     logging.info("Story Aggregator Function executed at %s", execution_start_time)
     version = importlib.metadata.version("lna_db")
     logging.info(f"lna_db version: {version}")
-    load_dotenv()
-    username = str(os.environ.get("username_of_db"))
-    password = str(os.environ.get("password_of_db"))
-    mongo_uri_part2 = str(os.environ.get("mongo_uri_part2"))
 
-    logging.info("initializing database")
-    await init_database(
-        username=username,
-        password=password,
-        mongo_uri_part2=mongo_uri_part2,
-    )
+    load_dotenv()
 
     logging.info("calling time based aggregator")
-    time_based_aggregator = TimeBasedAggregator()
+    time_based_aggregator = TimeBasedAggregator(
+        database_username=str(os.environ.get("username_of_db")),
+        database_password=str(os.environ.get("password_of_db")),
+        mongo_uri_part2=str(os.environ.get("mongo_uri_part2")),
+    )
+
     end_time = datetime.now(timezone.utc)
     start_time = end_time - timedelta(days=1)
     await time_based_aggregator.aggregate_stories(

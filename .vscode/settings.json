@@ -11,5 +11,8 @@
     "azureFunctions.projectRuntime": "~4",
     "debug.internalConsoleOptions": "neverOpen",
     "azureFunctions.projectLanguageModel": 2,
-    "azureFunctions.projectSubpath": "backend/function-app"
+    "azureFunctions.projectSubpath": "backend/function-app",
+    "notebook.output.wordWrap": true,
+    "notebook.output.scrolling": true,
+    "notebook.output.textLineLimit": 10,
 }

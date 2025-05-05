@@ -1,19 +1,21 @@
-from lna_app.schema.schema import Article
-from google import genai
-from dotenv import load_dotenv
 import os
-import tiktoken # poetry add tiktoken
-from typing import List
+
+import tiktoken
+from dotenv import load_dotenv
+from google import genai
+from lna_db.models.news import Article
 
 # Approximate token limit for Gemini-2 models
 MAX_TOKENS = 30000
+
 
 def estimate_tokens(text: str) -> int:
     # Rough estimate using tiktoken (more accurate for OpenAI but decent for Gemini too)
     enc = tiktoken.get_encoding("cl100k_base")  # most compatible encoding
     return len(enc.encode(text))
 
-def generate_summary(articles: List[Article]) -> str:
+
+def generate_summary(articles: list[Article]) -> str:
     load_dotenv()
     llm_api_key = str(os.environ.get("GEMINI_KEY"))
 
@@ -34,7 +36,6 @@ def generate_summary(articles: List[Article]) -> str:
 
     client = genai.Client(api_key=llm_api_key)
     response = client.models.generate_content(
-        model="gemini-2.0-flash",
-        contents=prompt_intro + contents
+        model="gemini-2.0-flash", contents=prompt_intro + contents
     )
-    return response.text
+    return response.text or ""

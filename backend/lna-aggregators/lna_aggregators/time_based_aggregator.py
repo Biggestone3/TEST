@@ -3,9 +3,11 @@ from datetime import datetime, timedelta, timezone
 
 from beanie.operators import In
 from lna_db.core.types import Language, UUIDstr
+from lna_db.db.mongo import init_database
 from lna_db.models.news import AggregatedStory, Article
 
-from aggregators.aggregator import AbstractAggregator
+from lna_aggregators.aggregator import AbstractAggregator
+from lna_aggregators.summarizer import Summarizer
 
 
 class TimeBasedAggregator(AbstractAggregator):
@@ -14,10 +16,22 @@ class TimeBasedAggregator(AbstractAggregator):
     All articles belonging to the same hour will be in the same story.
     """
 
-    def __init__(self) -> None:
+    def __init__(
+        self, database_username: str, database_password: str, mongo_uri_part2: str
+    ) -> None:
         self.aggregator = TimeBasedAggregator.__name__
+        self.database_username = database_username
+        self.database_password = database_password
+        self.mongo_uri_part2 = mongo_uri_part2
 
     async def aggregate_stories(self, start_time: datetime, end_time: datetime) -> None:
+        # prepare db
+        await init_database(
+            username=self.database_username,
+            password=self.database_password,
+            mongo_uri_part2=self.mongo_uri_part2,
+        )
+
         logging.info(
             f"started aggregating stories by time, between {start_time} and {end_time}"
         )
@@ -26,16 +40,16 @@ class TimeBasedAggregator(AbstractAggregator):
             Article.publish_date >= start_time, Article.publish_date <= end_time
         ).to_list()
 
-        article_id_to_source_id = {
-            article.uuid: article.source_id for article in articles_in_range
-        }
+        article_id_to_article = {article.uuid: article for article in articles_in_range}
 
         logging.info(f"found {len(articles_in_range)} articles in range")
+
+        summarizer = Summarizer()
 
         # for each article find the key which it is associated with
         agg_keys_to_articles_to_add: dict[str, list[UUIDstr]] = {}
         for article in articles_in_range:
-            key = self.get_aggregation_key(article.publish_date)
+            key = self._get_aggregation_key(article.publish_date)
             agg_keys_to_articles_to_add.setdefault(key, []).append(article.uuid)
 
         # get stories with the corresponding aggregation keys
@@ -70,17 +84,38 @@ class TimeBasedAggregator(AbstractAggregator):
 
             # add source ids with no repetition
             story.source_ids.extend(
-                [article_id_to_source_id[article_id] for article_id in article_ids]
+                [
+                    article_id_to_article[article_id].source_id
+                    for article_id in article_ids
+                ]
             )
             story.source_ids = list(set(story.source_ids))
+
+            # generate summary
+            previous_summary = story.summary
+            new_articles_content = ""
+            for article_id in article_ids:
+                article = article_id_to_article[article_id]
+                title = article.title
+                content = article.content
+                new_articles_content += f"[title]\n{title}\n\n[content]\n{content}\n"
+
+            story.summary = await summarizer.generate_summary(
+                previous_summary=previous_summary,
+                new_articles_content=new_articles_content,
+            )
+
+            story.title = await summarizer.generate_title(summary=story.summary)
 
             # save (beanie does not support bulk upsert)
             await story.save()
 
-    def get_aggregation_key(self, time: datetime) -> str:
-        return self.get_aggregation_key_and_next_hour(time)[0]
+    def _get_aggregation_key(self, time: datetime) -> str:
+        return self._get_aggregation_key_and_next_hour(time)[0]
 
-    def get_aggregation_key_and_next_hour(self, time: datetime) -> tuple[str, datetime]:
+    def _get_aggregation_key_and_next_hour(
+        self, time: datetime
+    ) -> tuple[str, datetime]:
         current_hour = time.replace(minute=0, second=0, microsecond=0)
         next_hour = current_hour + timedelta(hours=1)
         return (f"{current_hour}_{next_hour}", next_hour)

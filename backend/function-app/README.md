@@ -8,7 +8,7 @@ and then copy the .whl file you get into the vendor directory
 ### Run locally
 from function-app: do it with the new version of lna_db if any.
 ``` bash
-pip install --force-reinstall ./vendor/lna_aggregators-0.1.0-py3-none-any.whl
+pip install --upgrade --force-reinstall --no-deps ./vendor/*
 ```
 
 from function-app

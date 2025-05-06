@@ -42,7 +42,9 @@ class TimeBasedAggregator(AbstractAggregator):
 
         article_id_to_article = {article.uuid: article for article in articles_in_range}
 
-        logging.info(f"found {len(articles_in_range)} articles in range")
+        logging.info(
+            f"found {len(articles_in_range)} articles. {start_time=}, {end_time=}"
+        )
 
         summarizer = Summarizer()
 

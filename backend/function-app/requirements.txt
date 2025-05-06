@@ -1,1 +1,2 @@
 ./vendor/lna_aggregators-0.1.0-py3-none-any.whl
+./vendor/lna_db-0.3.0-py3-none-any.whl

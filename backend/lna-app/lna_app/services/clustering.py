@@ -17,14 +17,14 @@ def estimate_tokens(text: str) -> int:
 
 def generate_summary(articles: list[Article]) -> str:
     load_dotenv()
-    llm_api_key = str(os.environ.get("GEMINI_KEY"))
+    llm_api_key = str(os.environ.get("gemeni_key"))
 
     # Initial system prompt
-    prompt_intro = (
-        "أنت مساعد ذكي. لديك مجموعة من الأخبار التالية، كل واحدة بعنوانها ومحتواها الكامل. "
-        "يرجى قراءة جميع الأخبار وتوليد ملخص شامل وموجز لها جميعاً باللغة العربية. "
-        "المحتوى:\n\n"
-    )
+    prompt_intro = """
+أنت مساعد ذكي. لديك مجموعة من الأخبار التالية، كل واحدة بعنوانها ومحتواها الكامل.
+يرجى قراءة جميع الأخبار وتوليد ملخص شامل وموجز لها جميعاً باللغة العربية.
+المحتوى:\n\n
+"""
     prompt_token_budget = MAX_TOKENS - estimate_tokens(prompt_intro)
 
     contents = ""

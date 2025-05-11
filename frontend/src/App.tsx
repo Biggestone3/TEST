@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { BrowserRouter as Router, Route, Routes} from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { Box } from '@mui/material';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import SearchAppBar from './components/Appbar';
@@ -8,7 +8,7 @@ import AuthCallback from './components/AuthCallback';
 
 
 export default function App() {
-  const [language, setLanguage] = useState<'en' | 'ar'>('en');
+  const [language, setLanguage] = useState<'en' | 'ar'>('ar');
 
   return (
     <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
@@ -26,7 +26,7 @@ export default function App() {
                 <NewsStack language={language} />
               </Box>
             } />
-            
+
             <Route path="/auth/callback" element={<AuthCallback />} />
           </Routes>
         </Box>

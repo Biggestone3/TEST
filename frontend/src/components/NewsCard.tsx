@@ -224,7 +224,8 @@ export default function NewsCard({ newsItem, language }: NewsCardProps) {
                 flexWrap: 'wrap',
                 gap: 0.5,
                 mb: 2,
-                flexDirection: isRTL ? 'row-reverse' : 'row'
+                flexDirection: isRTL ? 'row-reverse' : 'row',
+                justifyContent: isRTL ? 'flex-end' : 'flex-start'
               }}
             >
               {sources.map((source, index) => (
@@ -244,6 +245,7 @@ export default function NewsCard({ newsItem, language }: NewsCardProps) {
                     height: 'auto',
                     py: 0.5,
                     direction: isRTL ? 'rtl' : 'ltr',
+                    textAlign: isRTL ? 'right' : 'left'
                   }}
                 />
               ))}

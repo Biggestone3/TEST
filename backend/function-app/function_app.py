@@ -15,7 +15,7 @@ is_local = os.environ.get("AZURE_FUNCTIONS_ENVIRONMENT") == "Development"
 
 
 @app.timer_trigger(
-    schedule="* */30 * * * *",
+    schedule="0 */30 * * * *",
     arg_name="myTimer",
     run_on_startup=is_local,  # Only run on startup in local environment
     use_monitor=False,

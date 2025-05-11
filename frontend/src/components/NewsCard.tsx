@@ -98,6 +98,7 @@ export default function NewsCard({ newsItem, language }: NewsCardProps) {
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const [expanded, setExpanded] = React.useState(false);
   const [showAllArticles, setShowAllArticles] = React.useState(false);
+  const [visitedLinks, setVisitedLinks] = React.useState<Set<string>>(new Set());
   const isRTL = language === 'ar';
 
   const imageUrl =
@@ -120,6 +121,14 @@ export default function NewsCard({ newsItem, language }: NewsCardProps) {
   // Get sources from the News item
   const sources = Array.isArray(newsItem.sources) ? newsItem.sources : [];
   const hasSources = sources.length > 0;
+
+  const handleLinkClick = (url: string) => {
+    setVisitedLinks(prev => {
+      const newSet = new Set(prev);
+      newSet.add(url);
+      return newSet;
+    });
+  };
 
   return (
     <Card
@@ -302,8 +311,9 @@ export default function NewsCard({ newsItem, language }: NewsCardProps) {
                   href={source.url}
                   target="_blank"
                   rel="noopener"
+                  onClick={() => handleLinkClick(source.url)}
                   sx={{
-                    color: 'primary.main',
+                    color: visitedLinks.has(source.url) ? 'secondary.main' : 'primary.main',
                     cursor: 'pointer',
                     '&:hover': { textDecoration: 'underline' },
                     fontSize: isMobile ? '0.8rem' : '0.9rem',

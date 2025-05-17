@@ -32,6 +32,17 @@ async def fetch_content(
         article_content = soup.find(
             src.content_html_key[0], class_=src.content_html_key[1]
         )
+        full_url = myArticle.image_url
+        if src.name == "aljadeed": #For aljadeed, handle as follows
+            container = soup.find("div", class_="article_details_image_container")  # noqa: E501
+            img_tag = container.find("img") if container else None
+            if img_tag and img_tag.get("src"):
+                relative_url = img_tag['src']
+                full_url = f"www.aljadeed.tv{relative_url}"
+        elif src.name == "almanar": #for almanar, do as follows
+            a_tag = soup.find('figure', class_='article-image').find('a')
+            full_url = a_tag['href']
+        myArticle.image_url = full_url
         if myArticle.title and len(myArticle.title) > 3:
             try:
                 lang_code = detect(myArticle.title)
@@ -140,11 +151,11 @@ async def fetch_articles(
             response = await client.get(src.url, timeout=10)
             response.raise_for_status()
             data = response.json()
-
         articles = data.get("articles", [])
         tasks = []
 
         for article in articles[:article_count]:
+            image_url = article["mainImage"].split("?")[0] #Get image url directly, no need to get from article as it is already provided  # noqa: E501
             id = uuid.uuid4()
             url = article["websiteUrl"]
             dt = parser.parse(article["date"])
@@ -156,6 +167,7 @@ async def fetch_articles(
                 title=article["name"],
                 publish_date=dt,
                 crawler="LNACrawlerTimer",
+                image_url=image_url,
             )
             tasks.append(
                 asyncio.create_task(
@@ -212,7 +224,7 @@ async def main() -> None:
             uuid=uuid.UUID(int=0),
             name="almanar",
             url="https://almanar.com.lb/rss",
-            content_html_key=("div", "article-content"),
+            content_html_key=("figure", "article-image"),
             has_rss=True,
         ),
         (uuid.UUID(int=1)): Source(
@@ -232,7 +244,7 @@ async def main() -> None:
     }
 
     # Run feed fetching **only once** per source
-    tasks = [asyncio.create_task(get_feed(source, 5)) for source in sourceArr.values()]
+    tasks = [asyncio.create_task(get_feed(source, 6)) for source in sourceArr.values()]
 
     await asyncio.gather(*tasks)
 
@@ -256,3 +268,4 @@ def LnaCrawlerTimer(myTimer: func.TimerRequest) -> None:
         asyncio.run(main())
     except Exception as e:
         logging.error(f"Error: {str(e)}")
+asyncio.run(main())

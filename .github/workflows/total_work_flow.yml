@@ -65,9 +65,15 @@ jobs:
             cat "$dir/requirements.txt" >> requirements.txt
             echo "" >> requirements.txt
           done
+          # Clean up requirements
           sed -i '/^-e /d' requirements.txt
           sed -i '/^\.\.\?\//d' requirements.txt
           sed -i 's/ ;.*//' requirements.txt
+
+          # Remove incompatible or OS-specific packages
+          sed -i '/pywin32/d' requirements.txt
+          sed -i '/pypiwin32/d' requirements.txt
+
           awk -F '==' '{print $1}' requirements.txt | sort -u > temp.txt
           mv temp.txt ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/requirements.txt
 

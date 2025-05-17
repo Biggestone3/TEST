@@ -105,7 +105,10 @@ class Article(TimeStampedModel):
         default="unknown_please_fill",
         description="The crawler which generated this article",
     )
-
+    image_url : str = Field(
+        default="",
+        description="Link associated with the article, extratced and set alongside the other fields of the article.",
+    )
     class Config:
         arbitrary_types_allowed = True
 

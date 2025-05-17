@@ -268,4 +268,3 @@ def LnaCrawlerTimer(myTimer: func.TimerRequest) -> None:
         asyncio.run(main())
     except Exception as e:
         logging.error(f"Error: {str(e)}")
-asyncio.run(main())
